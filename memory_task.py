@@ -13,9 +13,10 @@ from psychopy import core, visual, event #help(visual.ImageStim)
 
 win = visual.Window(size=(1000, 1000), color=(0, 0 , 0), units = 'pix')
 
+picturesFolder = './500_face_human'
 imPaths = []#Lists all images full paths
 faceCounter = 1
-for r, d, f in os.walk('/home/fnadeau/Pictures/face_human'):
+for r, d, f in os.walk(picturesFolder):
     for file in f:
         if '.jpg' in file:
             imPaths.append(os.path.join(r, file))
