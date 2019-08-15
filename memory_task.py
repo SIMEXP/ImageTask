@@ -1,25 +1,32 @@
+
+
+
 #!/usr/bin/env python
 # coding: utf-8
 
 # In[ ]:
 
 
-#MEMORY TASK (BETA)
+#memory_task
 from __future__ import division
 import os
 from PIL import Image
 import random
-from psychopy import core, visual, event #help(visual.ImageStim)
+from psychopy import core
+from psychopy import visual
+from psychopy import event #help(visual.ImageStim)
 
 win = visual.Window(size=(1000, 1000), color=(0, 0 , 0), units = 'pix')
 
+cwd = os.getcwd() #Relative path to the image folder - make sure to have it it your cwd
 imPaths = []#Lists all images full paths
 faceCounter = 1
-for r, d, f in os.walk('/home/fnadeau/Pictures/face_human'):
-    for file in f:
-        if '.jpg' in file:
-            imPaths.append(os.path.join(r, file))
+for r, d, f in os.walk(cwd):
+    for fileName in f:
+        if '.jpg' in fileName:
+            imPaths.append(os.path.join(r, fileName))
             faceCounter += 1           
+print(imPaths)
 
 def randSign():#randomly generates 1 or -1 (quadrant position)
     if random.random() < 0.5:
@@ -27,9 +34,10 @@ def randSign():#randomly generates 1 or -1 (quadrant position)
     else:
         return -1
 
-# SIMA-Q does perfect balancing
+# CIMA-Q does perfect balancing
 # Image task images shouldn't be redrawn except for few targets
-nStim = 10
+        #define random target variable for each trial?
+nStim = 15
 stimCounter = 1
 stimList = []#List of stimuli used in order with quadrant position for a trial
 key_pressed = []
@@ -48,7 +56,18 @@ while stimCounter <= nStim:
     core.wait(2.0)
     stimCounter += 1
     key_pressed.append(event.getKeys(keyList=[0,1,2,3], modifiers=False, timeStamped=True))
-    stimList.append({'image':image.image, 'position':image.pos})
+    class stimList:
+        def __init__(self, image, position, keyPressed):
+            self.image = image.image
+            self.position = image.pos
+            self.keyPressed = event.getKeys(keyList=[0,1,2,3], modifiers=False, timeStamped=True)
+
+    #stimList.append({'image':image.image, 'position':image.pos})
 print(*stimList, sep = '\n')
 win.close()
 
+class stimList:
+    def __init__(self, image, position, key_pressed):
+        self.image = image.image
+        self.position = image.pos
+        self.key_pressed = event.getKeys(keyList=[0,1,2,3], modifiers=False, timeStamped=True)
