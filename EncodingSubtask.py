@@ -6,7 +6,8 @@ Created on Sun Sep 22 02:06:06 2019
 """
         #stimpos = [(250.0, 250.0),(-250.0, -250.0),(250.0, -250.0),(-250.0, -250.0)] #Possibly replacing randSign()
 
-from pandas import DataFrame as df
+import numpy
+import pandas as pd
 from psychopy import core
 from psychopy import data
 from psychopy import event
@@ -15,13 +16,27 @@ from Categories import Categories
 from randSign import randSign
 
 class Encoding(object):
-    def __init__(self):
-        self.categs = Categories(2,5).trialslist
-        self.trials = data.TrialHandler(self.categs,
-                                        1, 
-                                        method='sequential')
+    def __init__(self,nTrial,nStim):
+        self.nTrial = nTrial
+        self.nStim = nStim
+        self.stims = Categories(nTrial,nStim).encDF
+#        self.trials = data.TrialHandler(self.stims,
+#                                        1, 
+#                                        method='sequential')
         
         
+
+        self.poslist = []        
+
+
+        
+    
+    def setstimpos(self):
+        self.stimpos = (randSign()*250, randSign()*250)
+        return self.stimpos
+
+            
+    def runTask(self): # Shows stimuli in each trial list in "trials"(also list) 
         self.win = visual.Window(size=(1000, 1000), 
                                 color=(0, 0 , 0), 
                                 units = 'pix')
@@ -30,34 +45,24 @@ class Encoding(object):
                                                following images and \
                                                their location on screen.\
                                                Press space to start.')
-        self.poslist = []        
-
-    def setstimpos(self):
-        self.stimpos = (randSign()*250, randSign()*250)
-        return self.stimpos
-
-            
-    def runTask(self): # Shows stimuli in each trial list in "trials"(also list) 
         self.instructionStart.draw()
         self.win.flip()
         event.waitKeys(keyList=["space"],clearEvents=False)
-        for eachTrial in range(len(self.trials.trialList)-1):
-            stims = self.trials.trialList[eachTrial]['Encoding']
-            for stim in range(len(stims)-1):
+        for index in self.stims.index:
+            for stim in range(self.nStim):
                 stimulus = visual.ImageStim(self.win,
-                                            image = stims[stim], 
+                                            self.stims.loc[index][stim],
                                             color=(1,1,1), 
                                             pos = self.setstimpos(), 
-                                            size = (500, 500))
+                                            size = (500, 500),
+                                            name=self.stims.loc[index][stim])
                 stimulus.draw()
                 self.win.flip()
-                self.poslist.append(stimulus.pos)
+                stimTuple = (stimulus.name, stimulus.pos)
+                self.poslist.append(stimTuple)
                 core.wait(1)
-
-        return self.poslist
         self.win.close()
-task = Encoding().runTask()            
-#
-#trialos = Encoding()
-#help(trialos.categs)
-#trialosDF = df(trialos)
+        return pd.DataFrame(self.poslist)
+enc = Encoding(2,3)
+task = enc.runTask()   
+#enc = Encoding(2,3).trials.trialList[0]['Encoding']
