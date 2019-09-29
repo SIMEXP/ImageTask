@@ -4,12 +4,10 @@ Created on Sun Sep 22 02:06:06 2019
 
 @author: Francois
 """
-        #stimpos = [(250.0, 250.0),(-250.0, -250.0),(250.0, -250.0),(-250.0, -250.0)] #Possibly replacing randSign()
-
-import numpy
+import os
 import pandas as pd
 from psychopy import core
-from psychopy import data
+#from psychopy import data
 from psychopy import event
 from psychopy import visual
 from Categories import Categories
@@ -19,24 +17,18 @@ class Encoding(object):
     def __init__(self,nTrial,nStim):
         self.nTrial = nTrial
         self.nStim = nStim
-        self.stims = Categories(nTrial,nStim).encDF
+        self.categs = Categories(nTrial,nStim)
+        self.stims = self.categs.encDF
 #        self.trials = data.TrialHandler(self.stims,
 #                                        1, 
 #                                        method='sequential')
-        
-        
-
         self.poslist = []        
 
-
-        
-    
     def setstimpos(self):
         self.stimpos = (randSign()*250, randSign()*250)
         return self.stimpos
-
             
-    def runTask(self): # Shows stimuli in each trial list in "trials"(also list) 
+    def runEnc(self):
         self.win = visual.Window(size=(1000, 1000), 
                                 color=(0, 0 , 0), 
                                 units = 'pix')
@@ -62,7 +54,9 @@ class Encoding(object):
                 self.poslist.append(stimTuple)
                 core.wait(1)
         self.win.close()
-        return pd.DataFrame(self.poslist)
-enc = Encoding(2,3)
-task = enc.runTask()   
-#enc = Encoding(2,3).trials.trialList[0]['Encoding']
+        self.stimDF = pd.DataFrame(self.poslist).to_csv(os.getcwd()+'\\stimDF.csv')
+        return self.stimDF
+
+# Usage examples:
+#encObj = Encoding(2,3)
+#task = encObj.runEnc()   

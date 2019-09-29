@@ -27,9 +27,9 @@ class Categories(object):
     
     Attributes (specified by user)
     ------------------------------
-    numTrial : int
+    nTrial : int
     
-        Integer of numTrial desired trials.
+        Integer of nTrial desired trials.
         Each trial contains conditions 'Encoding' and 'Recall'.
     
     nStim : int
@@ -176,11 +176,11 @@ class Categories(object):
 #        randIm_np = image.imread(randIm)
         return randIm
      #Allows to create a single Categories object
-    def __init__(self,numTrial,nStim):
+    def __init__(self,nTrial,nStim):
         """
         Parameters
         ----------
-        numTrial: Specified number of trials
+        nTrial: Specified number of trials
         
         nStim: Specified number of stimuli per condition 
         
@@ -228,7 +228,7 @@ class Categories(object):
         imDF = pd.DataFrame object
         
             Dataframe of all stimuli for each condition for each trial.
-            Row = trial (number of rows = 'self.numTrial')
+            Row = trial (number of rows = 'self.nTrial')
             Column = conditions 
                 col[0] = 'Encoding' (contains items in 'self.EnStims'
                 col[1] = 'Recall' (contains items in 'self.recStims')
@@ -242,7 +242,7 @@ class Categories(object):
             Compatible with psychopy.data.TrialHandler object
         """
            
-        self.numTrial = numTrial #type = int: num desired trials
+        self.nTrial = nTrial #type = int: num desired trials
         self.nStim = nStim #type = int: n desired stim per condition
         self.graySquare = os.path.abspath('gs_318364508_17317b9b36_o.jpg')
         self.categs = [Categories.categCreate(maindir) 
@@ -250,23 +250,23 @@ class Categories(object):
                       if maindir.startswith('500_')]
         
         self.Encod = [[self.randImage() for stim in range(self.nStim)]
-                     for trial in range(self.numTrial)]
+                     for trial in range(self.nTrial)]
         
         self.EnStims = [randInsert(self.Encod[trial],
                                     self.graySquare)
-                       for trial in range(self.numTrial)]
+                       for trial in range(self.nTrial)]
         
         
         self.Targs = [choice(self.Encod[trial]) 
-                     for trial in range(self.numTrial)]
+                     for trial in range(self.nTrial)]
         
         self.Distractors = [[self.randImage() for stim in range(self.nStim) 
                            if stim not in flatten(self.Encod)]
-                           for trial in range(self.numTrial)]
+                           for trial in range(self.nTrial)]
         
         self.recStims = [randInsert(self.Distractors[trial],
                                         self.Targs[trial])
-                        for trial in range(self.numTrial)]
+                        for trial in range(self.nTrial)]
 
         self.encDF = pd.DataFrame(self.EnStims)
         
@@ -278,7 +278,8 @@ class Categories(object):
 #                                                  orient='index').values())
 
 #Usage examples:
-        
+categs = Categories(2,3)        
 encod = Categories(2,3).encDF
+recall = Categories(2,3).recDF
 #trials = Categories(2,3).trialslist
 #print(trials[0]['Encoding'])
