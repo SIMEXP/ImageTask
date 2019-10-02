@@ -278,7 +278,9 @@ class Categories(object):
 #                                                  orient='index').values())
 
 #Usage examples:
-categs = Categories(2,3)        
+categs = Categories(2,3)
+recstims = categs.recStims
+targs = categs.Targs       
 encod = Categories(2,3).encDF
 recall = Categories(2,3).recDF
 #trials = Categories(2,3).trialslist
