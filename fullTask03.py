@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Oct  2 15:03:19 2019
+Created on Mon Oct  7 04:40:42 2019
 
 @author: Francois
 """
@@ -69,7 +69,7 @@ class imTask(object):
         setpos = (randSign()*250, randSign()*250)
         return setpos
     
-    def getTargPos(self):
+    def getTargPos(self,whichTrial):
         for encstim in range(len(self.encStimlist)):
             stimTuple = self.encStimlist[encstim]
             if stimTuple[0] == self.thisTrialTarg:
@@ -82,8 +82,10 @@ class imTask(object):
 #        pos = stim[1]
 #        print(pos)
 
-    def getAnswers(self):
-        tPos = self.getTargPos()
+    def getAnswers(self,whichTrial):
+        self.answerlist = []
+        self.targetPos = self.getTargPos(whichTrial)
+        tPos = self.getTargPos(whichTrial)
         for stim in range(len(self.TrialDict['recStims'])):
             shownStim = self.TrialDict['recStims'][stim]
             if shownStim == self.thisTrialTarg:
@@ -101,14 +103,22 @@ class imTask(object):
                 elif 'n' in self.TrialDict['Recognition'][stim]:
                     self.answerlist.append('RejectOK')
         return self.answerlist
-            
-    def runEnc(self, whichTrial):
-        self.whichTrial = whichTrial
-        self.thisEncTrial = self.encDict[self.whichTrial]
-        self.encStimlist = []
+
+    def runTask(self, whichTrial):
         self.win = visual.Window(size=(1000, 1000), 
                                 color=(0, 0 , 0), 
-                                units = 'pix')
+                                units = 'pix')   
+        self.encTask = self.runEnc(whichTrial)
+        self.recTask = self.runRec(whichTrial)
+        self.answers = self.getAnswers(whichTrial)
+        self.win.close()
+        return self.answers
+
+    def runEnc(self,whichTrial):
+        self.encStimlist = []
+        self.whichTrial = whichTrial
+        self.thisEncTrial = self.encDict[self.whichTrial]
+
         self.encInstStart = visual.TextStim(self.win, 
                                             text = self.encInstStartText)
         self.encInstStart.draw()
@@ -128,20 +138,15 @@ class imTask(object):
             self.encStimlist.append(encStimTuple)
             core.wait(1)
             
-        self.win.close()
         self.stimDF = pd.DataFrame(self.encStimlist,
                                    columns=['encStims', 'encPos'])
         self.stimDict = self.stimDF.to_dict(orient="dict")
 #        self.stimDF.to_csv(os.getcwd()+'\\stimDF2.csv')
         return self.encStimlist
                    
-    def runRec(self):
+    def runRec(self,whichTrial):
         self.thisRecTrial = self.recDict[self.whichTrial]
         self.thisTrialTarg = self.categs.Targs[self.whichTrial]
-        self.targetPos = self.getTargPos()
-        self.win = visual.Window(size=(1000, 1000), 
-                                color=(0, 0 , 0), 
-                                units = 'pix')
         
         self.recInstStart = visual.TextStim(self.win,
                                             text=self.recInstStartText)
@@ -212,14 +217,18 @@ class imTask(object):
         self.end.draw()
         self.win.flip()
         core.wait(2)
-        self.win.close()
         return self.TrialDict
 
 task01 = imTask(2,3)
-t01tpos = task01.getTargPos()
-encdict01 = task01.encDict[0]
-targ01 = task01.categs.Targs[0]
-recdict01 = task01.recDict[0]
-enctask01 = task01.runEnc(0)
-rectask01 = task01.runRec(0) 
-answerlist = task01.getAnswers()
+taskrun01 = task01.runTask(0)
+#enctask01 = task01.runEnc(0)
+#rectask01 = task01.runRec(0) 
+#
+#
+#
+#t01tpos = task01.getTargPos()
+#encdict01 = task01.encDict[0]
+#encstimlist01 = task01.encStimlist
+#targ01 = task01.categs.Targs[0]
+#recdict01 = task01.recDict[0]
+#answerlist = task01.getAnswers()
