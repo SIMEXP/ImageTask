@@ -8,7 +8,6 @@ Created on Mon Sep 16 01:49:12 2019
 import os # Import this one 1st if not already in the directory of the task
 import pandas as pd
 #import secrets # secrets module prefered to default module "random" Generates cryptographically strong random numbers 
-#from PIL import Image
 from secrets import choice
 from secrets import randbelow as rb
 from flatten import flatten
@@ -28,9 +27,9 @@ class Categories(object):
     
     Attributes (specified by user)
     ------------------------------
-    numTrial : int
+    nTrial : int
     
-        Integer of numTrial desired trials.
+        Integer of nTrial desired trials.
         Each trial contains conditions 'Encoding' and 'Recall'.
     
     nStim : int
@@ -38,66 +37,6 @@ class Categories(object):
         Integer of nStim desired image stimuli per condition.
     ...
     
-    Attributes (self defined by Categories object)
-    ----------------------------------------------
-    
-    graySquare : str
-    
-        Path of control stimuli used in Encoding condition.
-        A simple 500x500p gray square
-    
-    categs : list
-    
-        List containing all pre-processed image categories found
-        in current working directory.
-        
-    Encod : list
-    
-        List of nStim image paths (str) randomly selected from
-        'self.categs'. Will be used in Encoding condition.
-        
-    EnStims : list
-    
-        List of image paths from 'self.Encod' and
-        'self.graySquare' (inserted at random index).
-        <len(self.EnStim)> = <len(self.Encod)+1>
-          
-    Targs : list
-    
-        List of target images for each trial's Recall condition.
-        Target images are randomly selected from 'self.Encod'.
-        
-    Distractors : list
-    
-        List of nStim image paths (str) randomly selected from
-        'self.categs', provided they have not already been selected
-        in 'self.Encod' (all new images). 
-        Will be used in Recall condition.
-        
-    recStims : list
-    
-        List of image paths from 'self.Distractors' and
-        'self.Targs' (inserted at random index). Each target image
-        is inserted in its respective trial's Recall condition
-        stimuli list.
-        <len(self.EnStim)> = <len(self.Encod)+1>
-
-    imDF = pd.DataFrame object
-    
-        Dataframe of all stimuli for each condition for each trial.
-        Row = trial (number of rows = 'self.numTrial')
-        Column = conditions 
-            col[0] = 'Encoding' (contains items in 'self.EnStims'
-            col[1] = 'Recall' (contains items in 'self.recStims')
-        
-    trialslist : list
-    
-        List of each row (trial) in 'self.imDF' as dictionary.
-        In each trial dictionary:
-            keys = 'Encoding': values = items in 'self.Enstim'
-                   'Recall': values = items in 'self.recStims'
-        Compatible with psychopy.data.TrialHandler object
-    ...
     
     Public Methods
     --------------
@@ -165,10 +104,24 @@ class Categories(object):
             by 'categCreate()'.
         """
         for maindir, dirnames,filenames in os.walk(os.path.abspath(maindir)):
-            filePathlist = [os.path.join(maindir, filename)
-            for filename in filenames if '.jpg' in filename]
+            filePathlist = [os.path.join(maindir,filename)
+                           for filename in filenames 
+                           if '.jpg' in filename]
+#        for impath in range(len(filePathlist)-1):
+#            im_np = image.imread(filePathlist[impath])
+#            for im in range(len(filePathlist)-1):
+#                image = Image.open(filePathlist[im])
+#                np_im = numpy.array(im)
+                
             return (sorted(filePathlist))
 
+
+#print np_im.shape
+#OUTPUT
+#(200, 400, 3)
+#np_im = np_im - 18
+#new_im = Image.fromarray(np_im)
+#new_im.save("numpy_altered_sample2.png")
     @classmethod     
     def categCreate(cls,maindir):
         """
@@ -220,21 +173,76 @@ class Categories(object):
         randCateg = rb(len(self.categs)-1)
         randSubcat = rb(len(self.categs[randCateg])-1)
         randIm = choice(self.categs[randCateg][randSubcat])
+#        randIm_np = image.imread(randIm)
         return randIm
      #Allows to create a single Categories object
-    def __init__(self,numTrial,nStim):
+    def __init__(self,nTrial,nStim):
         """
         Parameters
         ----------
-        numTrial: Specified number of trials
+        nTrial: Specified number of trials
         
         nStim: Specified number of stimuli per condition 
         
-        See 'Attributes' section above for description of
-        other attributes defined by Categories object.
-           """
+        graySquare : str
+        
+        Path of control stimuli used in Encoding condition.
+        A simple 500x500p gray square
+        
+        categs : list
+        
+            List containing all pre-processed image categories found
+            in current working directory.
+            
+        Encod : list
+        
+            List of nStim image paths (str) randomly selected from
+            'self.categs'. Will be used in Encoding condition.
+            
+        EnStims : list
+        
+            List of image paths from 'self.Encod' and
+            'self.graySquare' (inserted at random index).
+            <len(self.EnStim)> = <len(self.Encod)+1>
+              
+        Targs : list
+        
+            List of target images for each trial's Recall condition.
+            Target images are randomly selected from 'self.Encod'.
+            
+        Distractors : list
+        
+            List of nStim image paths (str) randomly selected from
+            'self.categs', provided they have not already been selected
+            in 'self.Encod' (all new images). 
+            Will be used in Recall condition.
+            
+        recStims : list
+        
+            List of image paths from 'self.Distractors' and
+            'self.Targs' (inserted at random index). Each target image
+            is inserted in its respective trial's Recall condition
+            stimuli list.
+            <len(self.EnStim)> = <len(self.Encod)+1>
+        
+        imDF = pd.DataFrame object
+        
+            Dataframe of all stimuli for each condition for each trial.
+            Row = trial (number of rows = 'self.nTrial')
+            Column = conditions 
+                col[0] = 'Encoding' (contains items in 'self.EnStims'
+                col[1] = 'Recall' (contains items in 'self.recStims')
+            
+        trialslist : list
+        
+            List of each row (trial) in 'self.imDF' as dictionary.
+            In each trial dictionary:
+                keys = 'Encoding': values = items in 'self.Enstim'
+                       'Recall': values = items in 'self.recStims'
+            Compatible with psychopy.data.TrialHandler object
+        """
            
-        self.numTrial = numTrial #type = int: num desired trials
+        self.nTrial = nTrial #type = int: num desired trials
         self.nStim = nStim #type = int: n desired stim per condition
         self.graySquare = os.path.abspath('gs_318364508_17317b9b36_o.jpg')
         self.categs = [Categories.categCreate(maindir) 
@@ -242,34 +250,39 @@ class Categories(object):
                       if maindir.startswith('500_')]
         
         self.Encod = [[self.randImage() for stim in range(self.nStim)]
-                     for trial in range(self.numTrial)]
+                     for trial in range(self.nTrial)]
         
         self.EnStims = [randInsert(self.Encod[trial],
                                     self.graySquare)
-                       for trial in range(self.numTrial)]
+                       for trial in range(self.nTrial)]
         
         
         self.Targs = [choice(self.Encod[trial]) 
-                     for trial in range(self.numTrial)]
+                     for trial in range(self.nTrial)]
         
         self.Distractors = [[self.randImage() for stim in range(self.nStim) 
                            if stim not in flatten(self.Encod)]
-                           for trial in range(self.numTrial)]
+                           for trial in range(self.nTrial)]
         
         self.recStims = [randInsert(self.Distractors[trial],
                                         self.Targs[trial])
-                        for trial in range(self.numTrial)]
+                        for trial in range(self.nTrial)]
 
-        self.imDF = pd.DataFrame.from_dict({'Encoding':self.EnStims,
-                                            'Recall':self.recStims})
+        self.encDF = pd.DataFrame(self.EnStims)
         
-        self.trialslist = list(
-                              pd.DataFrame.to_dict(
-                                                  self.imDF,
-                                                  orient='index').values())
+        self.recDF = pd.DataFrame(self.recStims)
+        
+#        self.trialslist = list(
+#                              pd.DataFrame.to_dict(
+#                                                  self.imDF,
+#                                                  orient='index').values())
 
 #Usage examples:
-        
-#cats = Categories(2,5)
-#trials = cats.trialslist
+categs = Categories(2,3)
+allcats = categs.categs
+#recstims = categs.recStims
+#targs = categs.Targs       
+#encod = Categories(2,3).encDF
+#recall = Categories(2,3).recDF
+#trials = Categories(2,3).trialslist
 #print(trials[0]['Encoding'])
