@@ -279,9 +279,10 @@ class Categories(object):
 
 #Usage examples:
 categs = Categories(2,3)
-recstims = categs.recStims
-targs = categs.Targs       
-encod = Categories(2,3).encDF
-recall = Categories(2,3).recDF
+allcats = categs.categs
+#recstims = categs.recStims
+#targs = categs.Targs       
+#encod = Categories(2,3).encDF
+#recall = Categories(2,3).recDF
 #trials = Categories(2,3).trialslist
 #print(trials[0]['Encoding'])

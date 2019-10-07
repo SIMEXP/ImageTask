@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Sep 28 16:15:24 2019
+Created on Wed Oct  2 15:03:19 2019
 
 @author: Francois
 """
 
-import os
-import numpy as np
 import pandas as pd
 from psychopy import core
-from psychopy import data
+#from psychopy import data
 from psychopy import event
 from psychopy import visual
 from Categories import Categories
@@ -17,13 +15,16 @@ from flatten import flatten
 from randSign import randSign
 
 class imTask(object):
-    def __init__(self,nTrial,nStim):
+    def __init__(self,whichTrial,nTrial,nStim):
+        self.whichTrial = whichTrial
         self.nTrial = nTrial
         self.nStim = nStim
         self.categs = Categories(nTrial,nStim)
         self.encDict = self.categs.encDF.to_dict(orient="index")
+        self.thisEncTrial = self.encDict[self.whichTrial]
         self.recDict = self.categs.recDF.to_dict(orient="index")
-#        self.encTask = Encoding(nTrial,nStim)
+        self.thisRecTrial = self.recDict[self.whichTrial]
+        self.thisTrialTarg = self.categs.Targs[self.whichTrial]
         self.encStimlist = []
         self.answerlist = []
         self.stimpos = {'0':(-250.0, 250.0),
@@ -34,32 +35,32 @@ class imTask(object):
         self.targetPos = self.getTargPos()
         
         self.encInstStartText = '''\
-        ... Memorize the following images and
-        ... their location on screen.\
-        ... Press space to start.\
+            Memorize the following images and
+            their location on screen.
+            Press space to start.\
                                 '''.format()
         
         self.recInstStartText = '''\
-        ... A series of {x} images will appear.
-        ... Indicate if shown image corresponds to a previously seen image
-        ... and in which quadrant it has appeared earlier.
-        ... Press SPACE to start\
+            A series of {x} images will appear.
+            Indicate if shown image corresponds to a previously seen image
+            and in which quadrant it has appeared earlier.
+            Press SPACE to start\
                              '''.format(x=self.nStim+1)
         
         self.recInstText1 = '''\
-        ... Have you seen this picture before?
-        ... If yes, press "y". If not, press "n".\
+            Have you seen this picture before?
+            If yes, press "y". If not, press "n".\
                          '''.format()
         
         self.recInstText2 = '''\
-        ... Where have you seen it? 
-        ... Press 0, 1, 2 or 3 to answer\
+            Where have you seen it? 
+            Press 0, 1, 2 or 3 to answer\
                          '''.format()
                          
         self.recInstPosText = '''\
-        ... Where have you seen it?
-        ... 0 = upper-left, 1 = upper-right
-        ... 2 = lower-left, 3 = lower-right\
+            Where have you seen it?
+            0 = upper-left, 1 = upper-right
+            2 = lower-left, 3 = lower-right\
                            '''.format()
         
         self.ansSaveText = 'Answer saved!'
@@ -78,14 +79,15 @@ class imTask(object):
                     return targPos
 
     def getAnswers(self):
+        tPos = self.targetPos
         for stim in range(len(self.TrialDict['recStims'])):
             shownStim = self.TrialDict['recStims'][stim]
             if shownStim == self.thisTrialTarg:
 #                print('TargetFound!')
                 if 'y' in self.TrialDict['Recognition'][stim]:
-                    if self.TrialDict['StimPosAnswers'][stim] == self.targetPos:
+                    if self.TrialDict['StimPosAnswers'][stim] == tPos:
                         self.answerlist.append('recogOKposOK')
-                    elif self.TrialDict['StimPosAnswers'][stim] != self.targetPos:
+                    elif self.TrialDict['StimPosAnswers'][stim] != tPos:
                         self.answerlist.append('recogOKposWrong')
                 elif 'n' in self.TrialDict['Recognition'][stim]:
                     self.answerlist.append('Miss')
@@ -96,9 +98,7 @@ class imTask(object):
                     self.answerlist.append('RejectOK')
         return self.answerlist
             
-    def runEnc(self,whichTrial):
-        self.whichTrial = whichTrial
-        self.thisEncTrial = self.encDict[self.whichTrial]
+    def runEnc(self):
         self.win = visual.Window(size=(1000, 1000), 
                                 color=(0, 0 , 0), 
                                 units = 'pix')
@@ -122,26 +122,13 @@ class imTask(object):
             core.wait(1)
             
         self.win.close()
-        self.stimDF = pd.DataFrame(self.encStimlist,columns=['encStims', 'encPos'])
+        self.stimDF = pd.DataFrame(self.encStimlist,
+                                   columns=['encStims', 'encPos'])
         self.stimDict = self.stimDF.to_dict(orient="dict")
 #        self.stimDF.to_csv(os.getcwd()+'\\stimDF2.csv')
         return self.encStimlist
-
-#for stimName, stimPos in stimTuple:
-#                for (key,value) in self.TrialDict.items():
-#                    for (key,value) in self.stimpos.items():
-#                        if self.TrialDict[value] == self.stimpos[key]:
-#                            stimTuple = (stimulus.name, stimulus.pos, self.stimpos) 
-
-        
-            
-    def runRec(self,whichTrial):
-        self.whichTrial = whichTrial
-        
-        self.thisRecTrial = self.recDict[self.whichTrial]
-        
-        self.thisTrialTarg = self.categs.Targs[self.whichTrial]
-
+                   
+    def runRec(self):
         self.win = visual.Window(size=(1000, 1000), 
                                 color=(0, 0 , 0), 
                                 units = 'pix')
@@ -210,7 +197,6 @@ class imTask(object):
                           'PosKeylist':self.posKeylist,
                           'StimPosAnswers':self.stimPosAnswers}
         
-#        for answer in self.TrialDict['PosAnswers']:
         self.TrialDF = pd.DataFrame(self.TrialDict)
         self.end.draw()
         self.win.flip()
@@ -218,22 +204,10 @@ class imTask(object):
         self.win.close()
         return self.TrialDict
 
-task01 = imTask(2,3)
-
-enctask01 = task01.runEnc(0)
-rectask01 = task01.runRec(0) 
+task01 = imTask(0,2,3)
+encdict01 = task01.encDict[0]
+targ01 = task01.categs.Targs[0]
+recdict01 = task01.recDict[0]
+enctask01 = task01.runEnc()
+rectask01 = task01.runRec() 
 answerlist = task01.getAnswers()
-
-#task02 = imTask(0,2,3)
-#stimpos02 = task02.stimpos
-#encdict02 = task02.encDict[0]
-#targ02 = task02.categs.Targs[0]
-#recdict02 = task02.recDict[0]
-#enctask02 = task02.runEnc()
-#rectask02 = task02.runRec() 
-#
-#bigdict= {'encdict':encdict02, 'targ':targ02, 'recdict':recdict02, 'enctask02':enctask02, 'rectask':rectask02}
-#targ02test = task02.categs.Targs
-#for item in range(len(rectask01['PosKeylist'])):
-#    print(item)
-#enc = Encoding(2,3).trials.trialList[0]['Encoding']
