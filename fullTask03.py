@@ -30,7 +30,7 @@ class imTask(object):
                         '1':(250.0, 250.0),
                         '2':(250.0, -250.0),
                         '3':(-250.0, -250.0)}
-        
+        self.outputlist = []
         
         self.encInstStartText = '''\
             Memorize the following images and
@@ -66,23 +66,31 @@ class imTask(object):
         self.endText = 'Thank you for your time, goodbye!'
 
     def setstimpos(self):
+        '''
+        Randomly sets the position of stimuli durung encoding
+        phase
+        
+        '''
         setpos = (randSign()*250, randSign()*250)
         return setpos
     
     def getTargPos(self,whichTrial):
+        '''
+        Returns a the position of target stimuli 
+        (during encoding phase) as a tuple.
+        '''
         for encstim in range(len(self.encStimlist)):
             stimTuple = self.encStimlist[encstim]
             if stimTuple[0] == self.thisTrialTarg:
                 pos = stimTuple[1]
                 return pos
 
-#for encstim in range(len(encstimlist01)):
-#    stim = encstimlist01[encstim]
-#    if stim[0] == targ01:
-#        pos = stim[1]
-#        print(pos)
-
     def getAnswers(self,whichTrial):
+        '''
+        Returns the answers based on keys pressed by subject
+        in a list and adds this list as 'Answers' in 'self.TrialDict'.
+        
+        '''
         self.answerlist = []
         self.targetPos = self.getTargPos(whichTrial)
         tPos = self.getTargPos(whichTrial)
@@ -102,19 +110,35 @@ class imTask(object):
                    self.answerlist.append('FalseAlarm')
                 elif 'n' in self.TrialDict['Recognition'][stim]:
                     self.answerlist.append('RejectOK')
-        return self.answerlist
+        self.TrialDict.update({'Answers':self.answerlist})
+ 
 
     def runTask(self, whichTrial):
+        '''
+        Launches the memory task. Saves each trial's dictionary
+        to 'self.outputlist'.
+        
+        '''
         self.win = visual.Window(size=(1000, 1000), 
                                 color=(0, 0 , 0), 
                                 units = 'pix')   
         self.encTask = self.runEnc(whichTrial)
         self.recTask = self.runRec(whichTrial)
-        self.answers = self.getAnswers(whichTrial)
+        self.getAnswers(whichTrial)
+        self.outputlist.append(self.TrialDict)
         self.win.close()
-        return self.answers
+        return self.outputlist
 
     def runEnc(self,whichTrial):
+        '''
+        Launches encoding phase.
+        A series of 'self.nStim'+1 stimuli 
+        ('self.nStim' images + 1 control stimulus (gray square))
+        is shown to subject.
+        Each images appears in a quadrant on screen. Subject must
+        memorize ach image and its position (excepting control stimuli).
+        
+        '''
         self.encStimlist = []
         self.whichTrial = whichTrial
         self.thisEncTrial = self.encDict[self.whichTrial]
@@ -145,6 +169,19 @@ class imTask(object):
         return self.encStimlist
                    
     def runRec(self,whichTrial):
+        '''
+        Launches Recall phase
+        
+        A series of 'self.nStim' +1 images ('self.nStim' new 
+        images + 1 target image seen during encoding phase)
+        is presented to subject.
+        Subject must answer if image shown was seen or not
+        during encoding phase. If so, user must indicate at
+        which position it previously appeared (0,1,2,3).
+        
+        Answers and stimuli used are returned in a dictionary.
+        Each run has a dictionary, listed in 'self.outputlist'.
+        '''
         self.thisRecTrial = self.recDict[self.whichTrial]
         self.thisTrialTarg = self.categs.Targs[self.whichTrial]
         
@@ -220,15 +257,5 @@ class imTask(object):
         return self.TrialDict
 
 task01 = imTask(2,3)
-taskrun01 = task01.runTask(0)
-#enctask01 = task01.runEnc(0)
-#rectask01 = task01.runRec(0) 
-#
-#
-#
-#t01tpos = task01.getTargPos()
-#encdict01 = task01.encDict[0]
-#encstimlist01 = task01.encStimlist
-#targ01 = task01.categs.Targs[0]
-#recdict01 = task01.recDict[0]
-#answerlist = task01.getAnswers()
+run01 = task01.runTask(0)
+run02 = task01.runTask(1)
