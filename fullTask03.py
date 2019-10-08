@@ -75,6 +75,18 @@ class imTask(object):
         
         self.endText = 'Thank you for your time, goodbye!'
 
+    def AMScore(self):
+        allAns = []
+        for trial in range(self.nTrial):
+            allAns.append(self.outputlist[trial]['Answers'])
+        anslist = flatten(allAns)
+        ok = anslist.count('recogOKposOK')
+        ws = anslist.count('recogOKposWrong')
+        fa = anslist.count('falseAlarm')
+        amscore = ok /(ws + fa)
+        return amscore
+                    
+            
     def setstimpos(self):
         '''
         Randomly sets the position of stimuli durung encoding
@@ -117,9 +129,9 @@ class imTask(object):
                     self.answerlist.append('Miss')
             elif shownStim != self.thisTrialTarg:
                 if 'y' in self.TrialDict['Recognition'][stim]:
-                   self.answerlist.append('FalseAlarm')
+                   self.answerlist.append('falseAlarm')
                 elif 'n' in self.TrialDict['Recognition'][stim]:
-                    self.answerlist.append('RejectOK')
+                    self.answerlist.append('rejectOK')
         self.TrialDict.update({'Answers':self.answerlist})
  
 
@@ -270,3 +282,4 @@ task01 = imTask(2,3)
 task01.runTask(0)
 task01.runTask(1)
 ans = task01.outputlist
+score01 = task01.AMScore()
