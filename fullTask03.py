@@ -19,6 +19,16 @@ class imTask(object):
     '''Runs the NeuroMod/CIMA-Q memory task
     '''
     def __init__(self,nTrial,nStim):
+        '''
+        Parameters
+        ----------
+        
+        nTrial: number of runs for a subject
+        
+        nStim: number of new images used in each phase in a trial
+        
+        '''
+        
         self.log = logging.LogFile(f='imTaskLogFile')
         self.nTrial = nTrial
         self.nStim = nStim
@@ -257,5 +267,6 @@ class imTask(object):
         return self.TrialDict
 
 task01 = imTask(2,3)
-run01 = task01.runTask(0)
-run02 = task01.runTask(1)
+task01.runTask(0)
+task01.runTask(1)
+ans = task01.outputlist
