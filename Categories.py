@@ -106,22 +106,9 @@ class Categories(object):
         for maindir, dirnames,filenames in os.walk(os.path.abspath(maindir)):
             filePathlist = [os.path.join(maindir,filename)
                            for filename in filenames 
-                           if '.jpg' in filename]
-#        for impath in range(len(filePathlist)-1):
-#            im_np = image.imread(filePathlist[impath])
-#            for im in range(len(filePathlist)-1):
-#                image = Image.open(filePathlist[im])
-#                np_im = numpy.array(im)
-                
+                           if '.jpg' in filename]               
             return (sorted(filePathlist))
 
-
-#print np_im.shape
-#OUTPUT
-#(200, 400, 3)
-#np_im = np_im - 18
-#new_im = Image.fromarray(np_im)
-#new_im.save("numpy_altered_sample2.png")
     @classmethod     
     def categCreate(cls,maindir):
         """
@@ -154,6 +141,7 @@ class Categories(object):
     def randImage(self):
         """
         Returns a random image path (type = str) from self.categs
+        Used to select stimuli for the task
         ...
         
         Variables
@@ -173,9 +161,8 @@ class Categories(object):
         randCateg = rb(len(self.categs)-1)
         randSubcat = rb(len(self.categs[randCateg])-1)
         randIm = choice(self.categs[randCateg][randSubcat])
-#        randIm_np = image.imread(randIm)
         return randIm
-     #Allows to create a single Categories object
+    
     def __init__(self,nTrial,nStim):
         """
         Parameters
@@ -271,18 +258,7 @@ class Categories(object):
         self.encDF = pd.DataFrame(self.EnStims)
         
         self.recDF = pd.DataFrame(self.recStims)
-        
-#        self.trialslist = list(
-#                              pd.DataFrame.to_dict(
-#                                                  self.imDF,
-#                                                  orient='index').values())
 
 #Usage examples:
 categs = Categories(2,3)
 allcats = categs.categs
-#recstims = categs.recStims
-#targs = categs.Targs       
-#encod = Categories(2,3).encDF
-#recall = Categories(2,3).recDF
-#trials = Categories(2,3).trialslist
-#print(trials[0]['Encoding'])
