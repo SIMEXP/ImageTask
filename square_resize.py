@@ -9,11 +9,20 @@ from PIL import Image
 import glob
 import os
 from tqdm import tqdm
+import platform
 
 def square_resize(category_name):
+    
     cwd = os.getcwd()
-    cat_path = cwd +'\\'+ category_name
-    images = [f for f in glob.glob(cat_path +  "**/**/**/*.jpg", recursive=True)]
+    check = platform.system()
+
+    # Adapting the directory paths to the appropriate OS
+    if check == 'Windows':
+        cat_path = cwd +'\\'+ category_name
+    else:
+    	cat_path = cwd +'/'+ category_name
+
+    images = [f for f in glob.glob(cat_path +  "**/**/**/*.*", recursive=True)]
     for im_path in tqdm(images):
         subcat_path, im_name = os.path.split(im_path)
         subcat_name = os.path.basename(subcat_path)
@@ -33,3 +42,7 @@ def square_resize(category_name):
             new_subcat_path = os.path.join(new_category_path, "500_"+subcat_name)
             os.system("mkdir {}".format(new_subcat_path))
             imResized.save(os.path.join(new_subcat_path, "500_"+im_name), 'JPEG', quality = 90)
+
+
+cat_name = input("Enter the category name (ie, the name of your folder): ")
+square_resize(cat_name)
