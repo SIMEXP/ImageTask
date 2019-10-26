@@ -13,7 +13,7 @@ import pandas as pd
 from tqdm import tqdm
 from flatten import flatten
 
-def square_resize(catName,extension='.jpg'):
+def square_resize(catName,size=(500,500),extension='.jpg'):
     cwd = os.getcwd()
     check = platform.system()
         # Adapting the directory paths to the appropriate OS
@@ -35,14 +35,14 @@ def square_resize(catName,extension='.jpg'):
             refInd = imPath.find(ref)
             if refInd != -1:
                 longpath, ext = os.path.splitext(imPath)
-                shortpath = longpath[:longpath.find(ref)]+extension
-#                    os.rename(imPath,shortpath)
-                shortpathlist.append((shortpath,imPath))
+                shortpath = longpath[:longpath.find(ref)]
+                shortpathlist.append((shortpath+extension,imPath))
+                os.rename(imPath,shortpath+extension)
     shortpaths = pd.DataFrame(shortpathlist)
-    return shortpaths
-imDF = square_resize('bathroom',extension='.jpg')             
+    shortpaths.to_csv(cwd+'\\'+'newNamesDF')
                     
-    for imPath in tqdm(shortpathlist):
+    for imPath in tqdm(shortpaths[0]):
+        print(imPath)
         subcatPath, imName = os.path.split(imPath)
         subcatName = os.path.basename(imPath)
        
@@ -63,5 +63,5 @@ imDF = square_resize('bathroom',extension='.jpg')
             imResized.save(os.path.join(newSubcatPath, "500_"+imName), 'jpg', quality = 90)
 
 #    shortpaths = pd.DataFrame((shortpathlist,fPaths))
-cat_name = input("Enter the category name (ie, the name of your folder): ")
-square_resize(cat_name)                   
+#cat_name = input("Enter the category name (ie, the name of your folder): ")
+square_resize('bathroom',size=(500,500),extension='.jpg')             
