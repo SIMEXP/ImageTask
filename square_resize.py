@@ -8,41 +8,60 @@ Created on Thu Aug 15 12:58:45 2019
 from PIL import Image
 import glob
 import os
-from tqdm import tqdm
 import platform
+import pandas as pd
+from tqdm import tqdm
+from flatten import flatten
 
-def square_resize(category_name):
-    
+def square_resize(catName,extension='.jpg'):
     cwd = os.getcwd()
     check = platform.system()
-
-    # Adapting the directory paths to the appropriate OS
+        # Adapting the directory paths to the appropriate OS
     if check == 'Windows':
-        cat_path = cwd +'\\'+ category_name
+        catPath = cwd +'\\'+ catName
     else:
-    	cat_path = cwd +'/'+ category_name
-
-    images = [f for f in glob.glob(cat_path +  "**/**/**/*.*", recursive=True)]
-    for im_path in tqdm(images):
-        subcat_path, im_name = os.path.split(im_path)
-        subcat_name = os.path.basename(subcat_path)
+    	catPath = cwd +'/'+ catName
+    subDirs = [os.path.join(catPath,dirname) 
+              for dirname in os.listdir(catPath)]
+    fPaths = flatten([[os.path.abspath(os.path.join(subDir,filename))
+             for filename in os.listdir(subDir)]
+             for subDir in subDirs.__iter__()])
+    print(len(fPaths))
+    sources = pd.read_csv(cwd + '\\' + 'sources.csv')
+    references = sources['reference'].tolist()
+    shortpathlist = []
+    for imPath in fPaths.__iter__():
+        for ref in references.__iter__():
+            refInd = imPath.find(ref)
+            if refInd != -1:
+                longpath, ext = os.path.splitext(imPath)
+                shortpath = longpath[:longpath.find(ref)]+extension
+#                    os.rename(imPath,shortpath)
+                shortpathlist.append((shortpath,imPath))
+    shortpaths = pd.DataFrame(shortpathlist)
+    return shortpaths
+imDF = square_resize('bathroom',extension='.jpg')             
+                    
+    for imPath in tqdm(shortpathlist):
+        subcatPath, imName = os.path.split(imPath)
+        subcatName = os.path.basename(imPath)
        
-        if not '500_' in subcat_path:
-            im = Image.open(im_path)
+        if not '500_' in subcatPath:
+            im = Image.open(imPath)
             width, height = im.size
             if width > height:
                 im = im.crop(((width-height)/2,0,(width+height)/2,height))
             elif width < height:
                 im = im.crop((0,(height-width)/2,width,(height+width)/2))
-            imResized = im.resize((500,500), Image.ANTIALIAS)
+            imResized = im.resize(size, Image.ANTIALIAS)
             
-            new_category_path = os.path.join(cwd, '500_' + category_name)
-            os.system("mkdir {}".format(new_category_path))
+            newCatPath = os.path.join(cwd, '500_' + catName)
+            os.system("mkdir {}".format(newCatPath))
 
-            new_subcat_path = os.path.join(new_category_path, "500_"+subcat_name)
-            os.system("mkdir {}".format(new_subcat_path))
-            imResized.save(os.path.join(new_subcat_path, "500_"+im_name), 'JPEG', quality = 90)
+            newSubcatPath = os.path.join(newCatPath, "500_"+subcatName)
+            os.system("mkdir {}".format(newSubcatPath))
+            imResized.save(os.path.join(newSubcatPath, "500_"+imName), 'jpg', quality = 90)
 
-
+#    shortpaths = pd.DataFrame((shortpathlist,fPaths))
 cat_name = input("Enter the category name (ie, the name of your folder): ")
-square_resize(cat_name)
+square_resize(cat_name)                   
