@@ -80,9 +80,9 @@ class Categories(object):
     randInsert(lst,item)
     
         Insert item to random index in lst
-        see <help(randInsert)> for more details
-        
+        see <help(randInsert)> for more details   
     """
+    
     @classmethod
     def filePathlist(cls, maindir):
         """

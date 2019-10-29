@@ -4,6 +4,7 @@ Created on Sun Sep 22 00:30:07 2019
 
 @author: Francois
 """
+from random import SystemRandom as rand
 from secrets import randbelow as rb
 from flatten import flatten
 
@@ -46,6 +47,10 @@ def randInsert(lst, item):
             Calls flatten(lst) to vectorize 'lstTop'
             see <help(flatten)> for more details
     """
+    insF = len(lst)/2
+lst = ['a', 'b', 'c', 'd', 'e', 'f', 'g','h']
+insF = int(len(lst)/2)
+sliceIndexes = [rand.randint(,4) for ind in range(insF)]
     sliceIndex = rb(len(lst)-1)
     lstTop, lstBottom = lst[:sliceIndex], lst[sliceIndex:]
     lstTop.append(item)

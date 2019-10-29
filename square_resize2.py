@@ -13,40 +13,43 @@ from tqdm import tqdm
 from flatten import flatten
 
 def square_resize2(catName,size=(500,500),extension='.jpeg'):
-	'''
-		Prepare images for the scanner
+#def square_resize2(catName):
 
-		This function:
-		Renames images to a shorter name
+    """
+	Prepare images for the scanner
+
+	This function:
+        ames images to a shorter name
 		Saves web name/image ID to csv (for references)
 		Changes apect ratio to square (cropping)
 		Uniformizes image files extensions
 		Resizes images to desired size in pixels
 		Saves resized images to new location (no overwriting)
 
-		Parameters
-		----------
-		catName: type = str
-			name of category images directory (ex: 'outdoor_sport')
+	Parameters
+	----------
+	catName: type = str
+		name of category images directory (ex: 'outdoor_sport')
 
-		size: type = tuple
-			Tuple (width, length) indicating desired size in pixels
-				type(width) and type(length) = int
+	size: type = tuple
+		Tuple (width, length) indicating desired size in pixels
+			type(width) and type(length) = int
+            width & length should be equal
 
-		extension: type = str
-			Desired file extension for images as string
+	extension: type = str
+		Desired file extension for images as string
 
-		Returns
-		-------
-		None
-	'''
-
+	Returns
+	-------
+	None
+    """
+    
     cwd = os.getcwd()
     check = platform.system()
     sources = pd.read_csv(cwd + '\\' + 'sources.csv')
-    refs = sources['reference'].tolist()
-    altRefs = [ref.upper() for ref in refs] #Checking for mistaken CAPS
-    references = refs+altRefs
+    references = sources['reference'].tolist()
+#    altRefs = [ref.upper() for ref in refs] #Checking for mistaken CAPS
+#    references = refs+altRefs
     shortpathlist_toDF = []
     shortpathlist = []
                          #Adapting the directory paths to appropriate OS
@@ -59,11 +62,15 @@ def square_resize2(catName,size=(500,500),extension='.jpeg'):
               for dirname in os.listdir(catPath)]
     fPaths = flatten([[os.path.abspath(os.path.join(subDir,filename))
              for filename in os.listdir(subDir)]
-             for subDir in subDirs.__iter__()])
-                         #Counting images in subdirectories
-    for subDir in subDirs:
-        if len(subDir) != 20:
-            print(subDir+' has '+len(subDir)+' images')
+             for subDir in subDirs.__iter__()])                                   
+
+                                    #Counting subdirectories & images
+    for subDir in subDirs.__iter__():
+        extTest = os.path.splitext(subDir)[1]
+        if extTest == ' ' and len(subDir) != 16:
+            print(subDir + ' has '+str(len(subDir))+' subcategories')
+        elif extTest != ' ' and len(subDir) != 20:
+            print(subDir+' has '+str(len(subDir))+' images')
             break
 
                                    #Rename images  & save references to csv
@@ -89,6 +96,7 @@ def square_resize2(catName,size=(500,500),extension='.jpeg'):
             resizedPath = os.path.join(newSubcatPath,newName)
             if not '500_' in subcatPath:
                 im = Image.open(newpath)
+                im = im.convert("RGB")  #Converts 'im' to RGB to save in JPEG
                 width, height = im.size
                 if width > height:
                     im = im.crop(((width-height)/2,0,(width+height)/2,height))
@@ -98,4 +106,4 @@ def square_resize2(catName,size=(500,500),extension='.jpeg'):
                 os.system("mkdir {}".format(newCatPath))
                 os.system("mkdir {}".format(newSubcatPath))
                 imResized.save(resizedPath,'JPEG', quality = 90)
-square_resize2('medical_instrument2',size=(500,500),extension='.jpeg')
+square_resize2('vehicle2',size=(500,500),extension='.jpeg')
