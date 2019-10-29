@@ -1,6 +1,9 @@
 # memory_task_neuromod
 ![alt text][logo_neuromod]
 ## An fMRI experiment on memory
+
+### The Inanimate objects are available for download and use!
+
 [logo_neuromod]: https://raw.githubusercontent.com/mtl-brainhack-school-2019/memory_task_neuromod/master/logo_neuromod.jpg "Logo on web page"
 ### Getting in Context
 #### A Brief Introduction to Cognitive Neuroscience: {https://drive.google.com/file/d/18pzaJ2LAO5HN4JsgCkx1rnSsju32KLrN/view?usp=sharing}
@@ -33,7 +36,7 @@ s = shutil.move(files,destination) #works just like the Unix Shell mv command
 ```python
 s = square_resize('categoryNameHere')
 ```
-#### I use the Spyder IDE to edit and run python files.
+#### Useful Spyder IDE to edit and run python files.
 ```python
 s = conda install -c anaconda spyder 
 s = spyder square_resize.py
@@ -46,5 +49,5 @@ s = spyder square_resize.py
 - [x] Create a class containing all images that will be repeated after each trial
 - [] Create a noisy image stimulus (distractor) showing up at random moments to avoid habituation phenomenon in subjects brain activity.
 - [] IN PROGRESS: missing noisy image - Randomize the presentation of either target, image distractor or noisy distractor across trials.
-- [] IN PROGRESS: Adapt the demo code to the main experimental code
+- [x] IN PROGRESS: Adapt the demo code to the main experimental code
 - [] Continue compiling creative commons complex images
