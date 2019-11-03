@@ -4,17 +4,16 @@ Created on Sat Oct 26 22:16:38 2019
 
 @author: Francois
 """
-from PIL import Image
+import imdirect
 import os
-import platform
 import pandas as pd
+import platform
+from PIL import Image
 from shutil import move as mv
 from tqdm import tqdm
 from flatten import flatten
 
 def square_resize2(catName,size=(500,500),extension='.jpeg'):
-#def square_resize2(catName):
-
     """
 	Prepare images for the scanner
 
@@ -43,7 +42,8 @@ def square_resize2(catName,size=(500,500),extension='.jpeg'):
 	-------
 	None
     """
-    
+                          #Fixes unexpected image rotation while saving
+    imdirect.monkey_patch()   
     cwd = os.getcwd()
     check = platform.system()
     sources = pd.read_csv(cwd + '\\' + 'sources.csv')
@@ -71,7 +71,6 @@ def square_resize2(catName,size=(500,500),extension='.jpeg'):
             print(subDir + ' has '+str(len(subDir))+' subcategories')
         elif extTest != ' ' and len(subDir) != 20:
             print(subDir+' has '+str(len(subDir))+' images')
-            break
 
                                    #Rename images  & save references to csv
     for imPath in fPaths.__iter__():
@@ -106,4 +105,4 @@ def square_resize2(catName,size=(500,500),extension='.jpeg'):
                 os.system("mkdir {}".format(newCatPath))
                 os.system("mkdir {}".format(newSubcatPath))
                 imResized.save(resizedPath,'JPEG', quality = 90)
-square_resize2('vehicle2',size=(500,500),extension='.jpeg')
+square_resize2('clothes',size=(500,500),extension='.jpeg')
