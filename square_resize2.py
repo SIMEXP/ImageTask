@@ -18,7 +18,7 @@ def square_resize2(catName,size=(500,500),extension='.jpeg'):
 	Prepare images for the scanner
 
 	This function:
-        ames images to a shorter name
+        Reames images to a shorter name
 		Saves web name/image ID to csv (for references)
 		Changes apect ratio to square (cropping)
 		Uniformizes image files extensions
@@ -105,4 +105,4 @@ def square_resize2(catName,size=(500,500),extension='.jpeg'):
                 os.system("mkdir {}".format(newCatPath))
                 os.system("mkdir {}".format(newSubcatPath))
                 imResized.save(resizedPath,'JPEG', quality = 90)
-square_resize2('clothes',size=(500,500),extension='.jpeg')
+square_resize2('vegetable',size=(500,500),extension='.jpeg')
