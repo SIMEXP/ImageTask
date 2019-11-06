@@ -105,4 +105,4 @@ def square_resize2(catName,size=(500,500),extension='.jpeg'):
                 os.system("mkdir {}".format(newCatPath))
                 os.system("mkdir {}".format(newSubcatPath))
                 imResized.save(resizedPath,'JPEG', quality = 90)
-square_resize2('ts_vehicle',size=(500,500),extension='.jpeg')
+square_resize2('decoration',size=(500,500),extension='.jpeg')
