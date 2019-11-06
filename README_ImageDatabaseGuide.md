@@ -15,7 +15,7 @@ https://docs.google.com/spreadsheets/d/1UjkGdKmNUstoQ2LJUbrKxZrJ5CIw-0aJw_9q-__g
 ##### Link to inventory spreadsheet: 
 
 https://docs.google.com/spreadsheets/d/1p411JQ-0d_Yvl9ZCXH_ecjJx-JrUJhvcL9rqoDZAWnw/edit?usp=sharing
-![alt text][inventory_inanimate]
+![alt text][inventory_inanimate_example]
 
 [inventory_inanimate_example]:https://github.com/FrancoisNadeau/ImageTask/blob/master/inventory_inanimate_example.jpg
 
