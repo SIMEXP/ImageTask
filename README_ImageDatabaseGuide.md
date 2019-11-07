@@ -37,6 +37,7 @@ https://docs.google.com/spreadsheets/d/1p411JQ-0d_Yvl9ZCXH_ecjJx-JrUJhvcL9rqoDZA
 #### 1. Non-human
 #### 2. Category name
 #### 3. Animal/Subcategory name
+#### 4. 
 #### 4. Pictures
 
 ##### Link to non-human animals inventory spreadsheet:
