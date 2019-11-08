@@ -32,13 +32,13 @@ https://docs.google.com/spreadsheets/d/1p411JQ-0d_Yvl9ZCXH_ecjJx-JrUJhvcL9rqoDZA
 
 #### 'Animate' qualifies a being that is alive, sensitive and has capacity for spontaneous movement by itself.
 
-### Non-human Animate Database hierarchy (4 levels)
+### Non-human Animate Database hierarchy (5 levels)
 
 #### 1. Non-human
 #### 2. Category name
 #### 3. Animal/Subcategory name
-#### 4. 
-#### 4. Pictures
+#### 4. Body, body parts or face (of the specified animal)
+#### 5. Pictures
 
 ##### Link to non-human animals inventory spreadsheet:
 
