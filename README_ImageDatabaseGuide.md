@@ -1,10 +1,10 @@
-﻿﻿﻿﻿﻿# NeuroMod Natural Image Database
+# NeuroMod Natural Image Database
 ## Natural (real-life pictures) of inanimate and animate objects for scientific use
 ### Work under construction
 
 ## Description
 
-#### This databank responds to an issue pointed out in the BOLD5000 paper (Chang et al., 2018). The human eye and its data reception and transmission system can form, transmit and analyse 10-12 images per second (Read & Meyer, 2000). This means several thousands images are perceived in a short amount of time. In computer vision, it is possible to achieve such high numbers of presented stimuli, but it has yet to be done while studying humans. In fact, the number of stimuli used in vision experiments is ten thousand times smaller with humans than with computers. This is why if we want AI to behave more like the human brain does, it is important to scale up the number of stimuli in human experiments to elaborate Deep Neural Networks (DNNs) closer to reality.
+#### The goal of creating this database it to provide the scientific community with an open-source, large natural image database meant for functional brain imaging. This database responds to an issue pointed out in the BOLD5000 paper (Chang et al., 2018). The human eye and its data reception and transmission system can form, transmit and analyse 10-12 images per second (Read & Meyer, 2000). This means several thousands images are perceived in a short amount of time. In computer vision, it is possible to achieve such high numbers of presented stimuli, but it has yet to be done while studying humans. In fact, the number of stimuli used in vision experiments is ten thousand times smaller with humans than with computers. This is why if we want AI to behave more like the human brain does, it is important to scale up the number of stimuli in human experiments to elaborate Deep Neural Networks (DNNs) closer to reality.
 
 ## Contents
 
