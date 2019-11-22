@@ -238,27 +238,29 @@ class Categories(object):
         
         self.Encod = [[self.randImage() for stim in range(self.nStim)]
                      for trial in range(self.nTrial)]
-        
-        self.EnStims = [randInsert(self.Encod[trial],
-                                    self.graySquare)
-                       for trial in range(self.nTrial)]
-        
-        
-        self.Targs = [choice(self.Encod[trial]) 
-                     for trial in range(self.nTrial)]
-        
-        self.Distractors = [[self.randImage() for stim in range(self.nStim) 
-                           if stim not in flatten(self.Encod)]
-                           for trial in range(self.nTrial)]
-        
-        self.recStims = [randInsert(self.Distractors[trial],
-                                        self.Targs[trial])
-                        for trial in range(self.nTrial)]
-
-        self.encDF = pd.DataFrame(self.EnStims)
-        
-        self.recDF = pd.DataFrame(self.recStims)
+#        
+#        self.EnStims = [randInsert(self.Encod[trial],
+#                                    self.graySquare)
+#                       for trial in range(self.nTrial)]
+#        
+#        
+#        self.Targs = [choice(self.Encod[trial]) 
+#                     for trial in range(self.nTrial)]
+#        
+#        self.Distractors = [[self.randImage() for stim in range(self.nStim) 
+#                           if stim not in flatten(self.Encod)]
+#                           for trial in range(self.nTrial)]
+#        
+#        self.recStims = [[choice([self.Distractors[trial] + self.Targs[trial]])
+#                        for recStim in range(self.nStim+self.Targs[trial])]
+#                        for trial in range(self.nTrial)]
+#
+#        self.encDF = pd.DataFrame(self.EnStims)
+#        
+#        self.recDF = pd.DataFrame(self.recStims)
 
 #Usage examples:
 categs = Categories(2,3)
 allcats = categs.categs
+encod = categs.Encod
+dirnames2 = [dirname for dirname in os.listdir(os.getcwd()) if dirname.startswith('500_')]

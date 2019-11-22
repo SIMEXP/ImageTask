@@ -47,13 +47,17 @@ def randInsert(lst, item):
             Calls flatten(lst) to vectorize 'lstTop'
             see <help(flatten)> for more details
     """
-    insF = len(lst)/2
-lst = ['a', 'b', 'c', 'd', 'e', 'f', 'g','h']
-insF = int(len(lst)/2)
-sliceIndexes = [rand.randint(,4) for ind in range(insF)]
-    sliceIndex = rb(len(lst)-1)
-    lstTop, lstBottom = lst[:sliceIndex], lst[sliceIndex:]
-    lstTop.append(item)
-    lstTop.append(lstBottom)
-    newlst = flatten(lstTop)
+    insF = int(len(lst)/2)
+#    sliceIndexes = [rand.randint(0,4) for ind in range(insF)]
+#        sliceIndex = 8
+    sliceIndexes = [rb(len(lst)-1) for ind in range(insF)]
+    for sliceIndex in sliceIndexes.__iter__():
+        lstTop = lst[:sliceIndex]
+        lstBottom = lst[sliceIndex:]
+        lstTop.append(item)
+        lstTop.append(lstBottom)
+        newlst = flatten(lstTop)
     return newlst
+lst = ['a', 'b', 'c', 'd', 'e', 'f', 'g','h']
+item = 'C:\\Users\\Francois\\GitHub\\ImageTask\\500_burger02.jpeg'
+testlist = randInsert(lst,item)
