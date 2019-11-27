@@ -5,10 +5,10 @@ Created on Sun Sep 22 00:30:07 2019
 @author: Francois
 """
 from random import SystemRandom as rand
-from secrets import randbelow as rb
-from flatten import flatten
-
-def randInsert(lst, item):
+#from secrets import randbelow as rb
+#from flatten import flatten
+from taskfunctions import flatten,sampling
+def randInsert(lst, item, insF):
     """Insert item to random index in lst
     ...
     
@@ -47,17 +47,17 @@ def randInsert(lst, item):
             Calls flatten(lst) to vectorize 'lstTop'
             see <help(flatten)> for more details
     """
-    insF = int(len(lst)/2)
 #    sliceIndexes = [rand.randint(0,4) for ind in range(insF)]
 #        sliceIndex = 8
-    sliceIndexes = [rb(len(lst)-1) for ind in range(insF)]
-    for sliceIndex in sliceIndexes.__iter__():
-        lstTop = lst[:sliceIndex]
-        lstBottom = lst[sliceIndex:]
-        lstTop.append(item)
-        lstTop.append(lstBottom)
-        newlst = flatten(lstTop)
-    return newlst
-lst = ['a', 'b', 'c', 'd', 'e', 'f', 'g','h']
+    insF = int(insF)
+    indexes = [sInd for sInd in range(len(lst))]
+    sInds = flatten(sampling(indexes,insF,1,output='list'))
+#    slices = [lst[:sInds[sInd]] for sInd in range(len(sInds))]
+#        lstBottom = lst[sliceIndex:]
+#        lstTop.append(item)
+#        lstTop.append(lstBottom)
+#        newlst = flatten(lstTop)
+    return sInds
+lst = ['a', 'b', 'c', 'd', 'e', 'f', 'g','h','i','j','k','l','m','n']
 item = 'C:\\Users\\Francois\\GitHub\\ImageTask\\500_burger02.jpeg'
-testlist = randInsert(lst,item)
+testlist = randInsert(lst,item,4)
