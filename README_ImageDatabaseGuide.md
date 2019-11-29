@@ -56,15 +56,15 @@ https://docs.google.com/spreadsheets/d/1UjkGdKmNUstoQ2LJUbrKxZrJ5CIw-0aJw_9q-__g
 http://wordnetweb.princeton.edu/perl/webwn
 
 ## Next steps
-[ ] find category matches for THINGS & BOLD 5000 vs Image15K
+- [ ] find category matches for THINGS & BOLD 5000 vs Image15K
 
-[ ] Validate synset choice for each image
+- [ ] Validate synset choice for each image
 
-[ ] Justify category selection
+- [ ] Justify category selection
 
-[ ] Balance animate (human & non-human) image categories
+- [ ] Balance animate (human & non-human) image categories
 
-[ ] Create user manual as markdown file
+- [ ] Create user manual as markdown file
 
 ## References
 #### Read, P., & Meyer, M.-P.(2000). Restauration of Motion Picture Films. Oxford, United Kingdom: Elsevier, 368p.
