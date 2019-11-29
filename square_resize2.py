@@ -11,9 +11,9 @@ import platform
 from PIL import Image
 from shutil import move as mv
 from tqdm import tqdm
-from flatten import flatten
+from taskfunctions import flatten
 
-def square_resize2(catName,size=(500,500),extension='.jpeg'):
+def square_resize2(folderName,size=(500,500),extension='.jpeg'):
     """
 	Prepare images for the scanner
 
@@ -27,7 +27,7 @@ def square_resize2(catName,size=(500,500),extension='.jpeg'):
 
 	Parameters
 	----------
-	catName: type = str
+	folderName: type = str
 		name of category images directory (ex: 'outdoor_sport')
 
 	size: type = tuple
@@ -54,23 +54,18 @@ def square_resize2(catName,size=(500,500),extension='.jpeg'):
     shortpathlist = []
                          #Adapting the directory paths to appropriate OS
     if check == 'Windows':
-        catPath = cwd +'\\'+ catName
+        folderPath = cwd +'\\'+ folderName
     else:
-    	catPath = cwd +'/'+ catName
+    	folderPath = cwd +'/'+ folderName
+
+    subDirs = [os.path.join(folderPath,dirname) 
+                  for dirname in os.listdir(folderPath)]
+        
                                            #Accessing files
-    subDirs = [os.path.join(catPath,dirname) 
-              for dirname in os.listdir(catPath)]
+
     fPaths = flatten([[os.path.abspath(os.path.join(subDir,filename))
              for filename in os.listdir(subDir)]
              for subDir in subDirs.__iter__()])                                   
-
-                                    #Counting subdirectories & images
-    for subDir in subDirs.__iter__():
-        extTest = os.path.splitext(subDir)[1]
-        if extTest == ' ' and len(subDir) != 16:
-            print(subDir + ' has '+str(len(subDir))+' subcategories')
-        elif extTest != ' ' and len(subDir) != 20:
-            print(subDir+' has '+str(len(subDir))+' images')
 
                                    #Rename images  & save references to csv
     for imPath in fPaths.__iter__():
@@ -83,17 +78,17 @@ def square_resize2(catName,size=(500,500),extension='.jpeg'):
                 shortpathlist_toDF.append((shortpath,imPath))
                 mv(imPath,shortpath)
     shortpathlist_toDF = pd.DataFrame(shortpathlist_toDF)
-    shortpathlist_toDF.to_excel(os.path.join(os.getcwd(),catName+'DF.xlsx'))
+    shortpathlist_toDF.to_excel(os.path.join(os.getcwd(),folderName+'DF.xlsx'))
 
                                       #Resize images & save to 'resizedPath'
     for newpath in tqdm(shortpathlist):
-            subcatPath, imName = os.path.split(newpath)
-            subcatName = os.path.basename(subcatPath)
-            newCatPath = os.path.join(cwd, '500_' + catName)
-            newSubcatPath = os.path.join(newCatPath, "500_"+subcatName)
+            subfolderPath, imName = os.path.split(newpath)
+            subfolderName = os.path.basename(subfolderPath)
+            newfolderPath = os.path.join(cwd, '500_' + folderName)
+            newSubfolderPath = os.path.join(newfolderPath, "500_"+subfolderName)
             newName = "500_"+ os.path.basename(newpath)
-            resizedPath = os.path.join(newSubcatPath,newName)
-            if not '500_' in subcatPath:
+            resizedPath = os.path.join(newSubfolderPath,newName)
+            if not '500_' in subfolderPath:
                 im = Image.open(newpath)
                 im = im.convert("RGB")  #Converts 'im' to RGB to save in JPEG
                 width, height = im.size
@@ -102,7 +97,8 @@ def square_resize2(catName,size=(500,500),extension='.jpeg'):
                 elif width < height:
                     im = im.crop((0,(height-width)/2,width,(height+width)/2))
                 imResized = im.resize(size, Image.ANTIALIAS)
-                os.system("mkdir {}".format(newCatPath))
-                os.system("mkdir {}".format(newSubcatPath))
+                os.system("mkdir {}".format(newfolderPath))
+                os.system("mkdir {}".format(newSubfolderPath))
                 imResized.save(resizedPath,'JPEG', quality = 90)
-square_resize2('decoration',size=(500,500),extension='.jpeg')
+#properIndex('face_cardinal')
+square_resize2('cardinal_test',size=(500,500),extension='.jpeg')

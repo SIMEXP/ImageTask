@@ -4,7 +4,6 @@ Created on Tue Nov 26 18:36:21 2019
 
 @author: Francois
 """
-import os
 import pandas as pd
 from psychopy import core
 #from psychopy import data
@@ -12,8 +11,7 @@ from psychopy import event
 from psychopy import logging
 from psychopy import visual
 from random import sample as randsmp
-from random import shuffle
-from flatten import flatten
+from taskfunctions import flatten
 from taskfunctions import imMatrix
 from taskfunctions import loadimages
 from taskfunctions import sampling
@@ -101,16 +99,17 @@ class imTask(object):
                 amscore = ok
         return amscore
     
-    def getTargPos(self):
+    def getTargPos(self,stimName):
         '''
         Returns a the position of target stimuli 
         (during encoding phase) as a tuple.
         '''
         for encstim in range(len(self.encStimlist[self.whichTrial])):
-            stimTuple = self.encStimlist[encstim]
-            if stimTuple[0] in self.encstims:
-                pos = stimTuple[1]
-                return pos
+            if stimName in self.encStimlist[encstim][0]:
+                pos = self.encStimlist[encstim][1]
+            else:
+                pos = 'None'                
+            return pos
 
     def getAnswers(self):
         '''
@@ -119,26 +118,33 @@ class imTask(object):
         
         '''
         self.answerlist = []
-        tPos = self.getTargPos()
+#        tPos = self.getTargPos()
         for trial in range(len(self.outputlist)):
-            for stim in range(len(self.outputlist[trial]['recStims'])):
-                shownStim = self.outputlist[trial]['recStims'][stim]
+            trialRecStims = self.outputlist[trial]['recStims']
+            recog = self.outputlist[trial]['Recognition']
+            posAns = self.outputlist[trial]['StimPosAns']
+            for stim in range(len(trialRecStims)):
+                shownStimName = trialRecStims[stim]
+                shownStimPos = self.getTargPos(trialRecStims[stim])
+                shownStim = (shownStimName,shownStimPos)
                 
-                if shownStim in self.encstims[trial]:
-                    if 'y' in self.TrialDict['Recognition'][stim]:
-                        if self.TrialDict['StimPosAnswers'][stim] == tPos:
-                            self.answerlist.append('recogOKposOK')
-                        elif self.TrialDict['StimPosAnswers'][stim] != tPos:
-                            self.answerlist.append('recogOKposWrong')
+                for encstim in self.encStimlist[trial]:
+                    if shownStim == encstim:
+                        if 'y' in recog[stim]:
                             
-                    elif 'n' in self.TrialDict['Recognition'][stim]:
-                        self.answerlist.append('Miss')
+                            if posAns[stim] == shownStim[1]:
+                                self.answerlist.append('recogOKposOK')
+                            elif posAns[stim] != shownStim[1]:
+                                self.answerlist.append('recogOKposWrong')
+                                
+                        elif 'n' in recog[stim]:
+                            self.answerlist.append('Miss')
                         
-                elif shownStim not in self.encstims[trial]:
-                    if 'y' in self.TrialDict['Recognition'][stim]:
-                       self.answerlist.append('falseAlarm')
-                    elif 'n' in self.TrialDict['Recognition'][stim]:
-                        self.answerlist.append('rejectOK')
+                    elif shownStim != encstim:
+                        if 'y' in recog[stim]:
+                            self.answerlist.append('falseAlarm')
+                        elif 'n' in recog[stim]:
+                            self.answerlist.append('rejectOK')
         self.TrialDict.update({'Answers':self.answerlist})
  
     def runTask(self,whichTrial):
@@ -233,7 +239,7 @@ class imTask(object):
         
         self.stimNamelist = []
         self.recKeylist = []
-        self.stimPosAnswers = []
+        self.stimPosAns = []
         self.recInstStart.draw()
         self.win.flip()
         posAnsKeys= []
@@ -262,7 +268,10 @@ class imTask(object):
                 posAnsKeys.append('None')
             self.posKeylist = flatten(posAnsKeys)
             self.recKeylist.append(recKeys)
-            self.stimNamelist.append(stimulus.name)
+            if stimulus.name in self.encStimlist:
+                self.stimNamelist.append(stimulus.name,self.encStimlist[stimulus.name][1])
+            else:
+                self.stimNamelist.append((stimulus.name,'None'))
             self.ansRec.draw()
             self.win.flip()
             core.wait(1)
@@ -270,23 +279,24 @@ class imTask(object):
         for posKey in range(len(self.posKeylist)):
             answer = self.posKeylist[posKey]
             if answer != 'None':
-                self.stimPosAnswers.append(self.stimpos[answer])
+                self.stimPosAns.append(self.stimpos[answer])
             elif answer == 'None':
-                self.stimPosAnswers.append('None')
+                self.stimPosAns.append('None')
                                     
         self.TrialDict = {'recStims':self.stimNamelist,
                           'Recognition':flatten(self.recKeylist),
                           'PosKeylist':self.posKeylist,
-                          'StimPosAnswers':self.stimPosAnswers}
+                          'StimPosAns':self.stimPosAns,
+                          'EncStims':self.encStimlist}
         
-        self.TrialDF = pd.DataFrame(self.TrialDict)
+#        self.TrialDF = pd.DataFrame(self.TrialDict)
         self.end.draw()
         self.win.flip()
         core.wait(2)
         
         return self.TrialDict
 
-task01 = imTask(6,2)
-task01.runTask(1)
+task01 = imTask(4,2)
+outputlist = task01.runTask(1)
 ans = task01.outputlist
 score01 = task01.AMScore()
