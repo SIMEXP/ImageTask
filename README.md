@@ -43,7 +43,7 @@ s = spyder square_resize.py
 
 ## Next objectives
 - [x] Task code
-- [] Compile participants' scores
-- [] Create a noisy image stimulus (non-object) showing up at random moments to avoid habituation phenomenon in subjects brain activity.
-- [] Create REQUIREMENTS.txt file
+- [ ] Compile participants' scores
+- [ ] Create noisy image stimulus (non-object) showing up at random moments to avoid habituation phenomenon in subjects brain activity.
+- [ ] Create REQUIREMENTS.txt file
 - [x] IN PROGRESS: Adapt the demo code to the main experimental code
