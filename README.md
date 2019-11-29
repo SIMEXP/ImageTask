@@ -16,7 +16,7 @@
 ## Prerequisites
 #### N.B: You need to have a dedicated graphic card (in most cases) to display the experimental monitor created by the script.
 
-#### Download, extract (if compressed) and install Psychopy toolbox (select the latest stable version, which is 3.1.5 at the moment).
+#### Download, extract (if compressed) and install Psychopy toolbox (select the latest stable version).
 {https://www.psychopy.org/download.html}
 ```python
 s = pip install psychopy
@@ -30,11 +30,9 @@ s = import shutil
 s = shutil.move(files,destination) #works just like the Unix Shell mv command
 ```
 ## Image stimuli preprocessing
-### To make sure all images in a given category (i.e. 'clothing') are formatted appropriately, execute the 'square_resize.py' function on the previously extracted folders in your terminal or IDE.
-##### Here's a link to individually download 'square_resize.py' from the GitHub repository:
-{https://github.com/mtl-brainhack-school-2019/memory_task_neuromod/blob/master/square_resize.py "Link to function script"}
+### To make sure all images in a given category (i.e. 'clothing') are formatted appropriately, run the 'square_resize.py' function on the previously extracted folders in your terminal or IDE:
 ```python
-s = square_resize('categoryNameHere')
+s = square_resize('categoryNameHere',size=(500,500),extension='.jpeg')
 ```
 #### Useful Spyder IDE to edit and run python files.
 ```python
@@ -44,10 +42,8 @@ s = spyder square_resize.py
 ##### In Spyder, click the run button to launch the experiment demo.
 
 ## Next objectives
-- [x] Create a class (image matrix) containing all images in their respective subcategories and categories to access them all.
-- [x] Initiate a stimuli selection function to ensure proper randomization without replacement across each subcategory and categories.
-- [x] Create a class containing all images that will be repeated after each trial
-- [] Create a noisy image stimulus (distractor) showing up at random moments to avoid habituation phenomenon in subjects brain activity.
-- [] IN PROGRESS: missing noisy image - Randomize the presentation of either target, image distractor or noisy distractor across trials.
+- [x] Task code
+- [] Compile participants' scores
+- [] Create a noisy image stimulus (non-object) showing up at random moments to avoid habituation phenomenon in subjects brain activity.
+- [] Create REQUIREMENTS.txt file
 - [x] IN PROGRESS: Adapt the demo code to the main experimental code
-- [] Continue compiling creative commons complex images
