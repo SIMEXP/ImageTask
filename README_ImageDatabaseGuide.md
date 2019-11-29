@@ -58,24 +58,16 @@ http://wordnetweb.princeton.edu/perl/webwn
 ## Next steps
 [ ] find category matches for THINGS & BOLD 5000 vs Image15K
 
-
 [ ] Validate synset choice for each image
+
 [ ] Justify category selection
+
 [ ] Balance animate (human & non-human) image categories
+
 [ ] Create user manual as markdown file
 
 ## References
-#### Read, P., & Meyer, M.-P. (2000). Restauration of Motion Picture Films. Oxford, United Kingdom: Elsevier, 368p.
-
-# title
-## large normal text
-### small bold text
-#### small normal text
-##### small bold text
-###### small underline
-
-
-
-
+#### Read, P., & Meyer, M.-P.(2000). Restauration of Motion Picture Films. Oxford, United Kingdom: Elsevier, 368p.
+#### Chang, N. et al.(2019). BOLD5000, a public fMRI dataset while viewing 5000 visual images, https://doi.org/10.1038/s41597-019-0052-3
 
 
