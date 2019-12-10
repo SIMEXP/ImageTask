@@ -11,8 +11,9 @@ from secrets import randbelow as rb
 from typing import Sequence
 
 def properIndex(folderName):
+    '''Names and indexes images according to category'''
     cwd = os.getcwd()
-    sources = pd.read_csv(cwd + '\\' + 'sources.csv')
+    sources = pd.read_csv(os.path.join(cwd, 'sources.csv'))
     references = sources['reference'].tolist()
 
     folderpath = os.path.join(cwd,folderName)
@@ -22,24 +23,22 @@ def properIndex(folderName):
         for file in files:
             impath = os.path.join(root,file)
             dirPath = os.path.dirname(impath)
-            dirName = os.path.basename(dirPath)
-            if 'bodypart' in dirName:
-                newDirName = dirName.replace('bodypart','body_part')
-                dirName = newDirName
-                print(dirName)
+            dName = os.path.basename(dirPath)
+            if 'bodypart' in dName:
+                dName = dName.replace('bodypart','body_part')
             for ref in references.__iter__():
                 refInd = file.find(ref)
                 if refInd != -1:
                     suffix = file[refInd:]
             if counter <= 9:
-                okName = dirName  + '0' + str(counter) + suffix
+                okName = dName  + '0' + str(counter) + suffix
             elif counter >= 10:
-                okName = dirName + str(counter) + suffix
+                okName = dName + str(counter) + suffix
             okPath,ext = os.path.splitext(os.path.join(root,okName))
             os.rename(impath,okPath+'.jpeg')
             counter +=1
             print(len(os.listdir(dirPath)))
-            
+
 def randSign():
     '''
     Randomly generates 1 or -1 (quadrant position)
@@ -48,22 +47,22 @@ def randSign():
         return 1
     else:
         return -1
-    
+
 def setstimpos():
     '''
     Randomly sets the position of stimuli durung encoding
     phase
-    
+
     '''
     setpos = (randSign()*250, randSign()*250)
     return setpos
 
 def flatten(nestedlst):
-    """ 
+    """
     Description
     -----------
     Returns unidimensional list from nested list using list comprehension.
-    
+
     Parameters
     ----------
         nestedlst: list containing other lists etc.
@@ -77,24 +76,24 @@ def flatten(nestedlst):
     ------
         flatlst: unidimensional list
     """
-    flatlst = [bottomElem for sublist in nestedlst 
-              for bottomElem in (flatten(sublist) 
-              if (isinstance(sublist, Sequence) 
-              and not isinstance(sublist, str)) 
+    flatlst = [bottomElem for sublist in nestedlst
+              for bottomElem in (flatten(sublist)
+              if (isinstance(sublist, Sequence)
+              and not isinstance(sublist, str))
               else [sublist])]
     return flatlst
-    
+
 def loadimages(imdir='images'):
     '''
     Description
     -----------
     Lists the full relative path of all '.jpeg' files in a directory.
-    
+
     Parameters
     ----------
     imdir: type = str
         Name of the directory containing the images.
-    
+
     Return
     ------
     imlist: type = list
@@ -115,18 +114,18 @@ def sampling(lst,nsize,nsamples,exclusives=[]):
     Draws desired amount of samples of desired size without
     replacement from population.
     Output can be either list or dict.
-    
+
     Parameters
     ----------
     lst: type=list
         Input list from where population elements are sampled.
-    
+
     nsize: type=int
         Size of each sample.
-    
+
     nsamples: type=int
         Number of samples to be drawn from 'lst'
-    
+
     exclusives: type=list or type=dict
     '''
     samples = list(range(nsamples))#len=16
@@ -135,7 +134,7 @@ def sampling(lst,nsize,nsamples,exclusives=[]):
     for item in range(len(exclusives)):
         if item in flatten(inds) and item in exclusives:
             inds.remove(item)
-#    [inds.remove(exclusives[item]) 
+#    [inds.remove(exclusives[item])
 #           for item in range(len(exclusives))
 #           if item in flatten(inds)]
     samples = [inds[ind:ind+nsize] for ind in range(0, len(inds), nsize)]
@@ -149,22 +148,21 @@ def sampling(lst,nsize,nsamples,exclusives=[]):
                     shared_items.append(item)
         len(shared_items) != 0
         print(errorMsg)
-        
+
     except:
         return samples
-    
+
 def imMatrix(samples):
     nsize = len(samples[0])
     imMatrix = []
     images = loadimages()
     samples = flatten(samples)
-    
+
     for item in samples:
         imMatrix.append(images[item])
-        
-    imMatrix = [imMatrix[ind:ind+nsize]
-               for ind in range(0, len(imMatrix), nsize)]      
 
+    imMatrix = [imMatrix[ind:ind+nsize]
+               for ind in range(0, len(imMatrix), nsize)]
     return imMatrix
 #examples
 #nsize,nsamples,lst = 80,8,loadimages()

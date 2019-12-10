@@ -7,7 +7,6 @@ Created on Sat Oct 26 22:16:38 2019
 import imdirect
 import os
 import pandas as pd
-import platform
 from PIL import Image
 from shutil import move as mv
 from tqdm import tqdm
@@ -61,34 +60,40 @@ def square_resize2(folderName,size=(500,500),extension='.jpeg'):
     subDirs = [os.path.join(folderPath,dirname) 
                   for dirname in os.listdir(folderPath)]
         
-                                           #Accessing files
+                                               #Accessing files
 
     fPaths = flatten([[os.path.abspath(os.path.join(subDir,filename))
              for filename in os.listdir(subDir)]
              for subDir in subDirs.__iter__()])                                   
 
                                    #Rename images  & save references to csv
-    for imPath in fPaths.__iter__():
+    for impath in fPaths.__iter__():
         for ref in references.__iter__():
-            refInd = imPath.find(ref)
+            refInd = impath.find(ref)
             if refInd != -1:
-                longpath, ext = os.path.splitext(imPath)
+                longpath, ext = os.path.splitext(impath)
                 shortpath = longpath[:longpath.find(ref)]+extension
+                shortname = os.path.basename(shortpath)
+                webname = impath[refInd+len(ref):]
+                imageID, imageExt = os.path.splitext(webname)
                 shortpathlist.append(shortpath)
-                shortpathlist_toDF.append((shortpath,imPath))
-                mv(imPath,shortpath)
+                shortpathlist_toDF.append((shortname,
+                                           ref,imageID,imageExt))
+                mv(impath,shortpath)
     shortpathlist_toDF = pd.DataFrame(shortpathlist_toDF)
     shortpathlist_toDF.to_excel(os.path.join(os.getcwd(),folderName+'DF.xlsx'))
 
                                       #Resize images & save to 'resizedPath'
     for newpath in tqdm(shortpathlist):
+            prefix = str(size[0])+'_'
             subfolderPath, imName = os.path.split(newpath)
             subfolderName = os.path.basename(subfolderPath)
-            newfolderPath = os.path.join(cwd, '500_' + folderName)
-            newSubfolderPath = os.path.join(newfolderPath, "500_"+subfolderName)
-            newName = "500_"+ os.path.basename(newpath)
+            newfolderPath = os.path.join(cwd, prefix + folderName)
+            newSubfolderPath = os.path.join(newfolderPath,
+                                            prefix+subfolderName)
+            newName = prefix + os.path.basename(newpath)
             resizedPath = os.path.join(newSubfolderPath,newName)
-            if not '500_' in subfolderPath:
+            if not prefix in subfolderPath:
                 im = Image.open(newpath)
                 im = im.convert("RGB")  #Converts 'im' to RGB to save in JPEG
                 width, height = im.size
