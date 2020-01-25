@@ -30,7 +30,7 @@ s = pip install psychopy
 ### Download the following images
 
 #### Inanimate objects:
-{https://drive.google.com/open?id=14V2LWbqvvw46JU7Hoz9A1rpeybQCltQ9}
+{https://drive.google.com/drive/folders/14V2LWbqvvw46JU7Hoz9A1rpeybQCltQ9?usp=sharing}
 
 #### Non-human animals:
 {https://drive.google.com/open?id=1VVQzqC8nGIS8GG4Jw_wklp7ZDvgXqLzT}
