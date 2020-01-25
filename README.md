@@ -36,14 +36,12 @@ s = square_resize('categoryNameHere',size=(500,500),extension='.jpeg')
 ```
 #### Useful Spyder IDE to edit and run python files.
 ```python
-s = conda install -c anaconda spyder 
+s = conda install -c anaconda spyder
 s = spyder square_resize.py
 ```
 ##### In Spyder, click the run button to launch the experiment demo.
 
 ## Next objectives
-- [x] Task code
-- [ ] Compile participants' scores
-- [ ] Create noisy image stimulus (non-object) showing up at random moments to avoid habituation phenomenon in subjects brain activity.
+
 - [ ] Create REQUIREMENTS.txt file
 - [x] IN PROGRESS: Adapt the demo code to the main experimental code

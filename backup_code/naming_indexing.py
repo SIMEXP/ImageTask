@@ -40,8 +40,6 @@ def naming_indexing(fname):
                 newsubdd = subdd[subdd.find(subd)+len(str(subd))+1:]
             if 'bodypart' in subd:#corrections to uniformize labels
                 newsubdd = subd.replace('bodypart', 'body_part')
-            if ' ' in subd:
-                newsubdd = subd.replace(' ', '_')
             else: newsubdd = subdd
             os.rename(join(getcwd(), fname, subd, subdd),
                       join(getcwd(), fname, subd, newsubdd))

@@ -1,0 +1,272 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Jan 22 15:48:03 2020
+
+@author: francois
+"""
+
+
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Nov 26 18:36:21 2019
+
+@author: Francois
+"""
+from random import sample as randsmp
+from os.path import basename as bname
+from psychopy import core
+#from psychopy import data
+from psychopy import event
+#from psychopy.tools.monitorunittools import posToPix # Not working
+#from psychopy import logging
+from psychopy import visual
+from taskfunctions import loadimages
+from taskfunctions import sampling
+from taskfunctions import setstimpos
+
+class ImageTask():
+    '''Runs the NeuroMod/CIMA-Q memory task
+    '''
+    def __init__(self, nstim, ntrial, impath):
+        '''
+        Parameter(s)
+        ----------
+        nTrial: number of runs for a subject
+        nstim: number of new images used in each phase in a trial
+        '''
+        self.nstim = nstim
+        self.ntrial = ntrial
+        self.impath = impath
+        self.stimdict = self.loadstims(impath)
+        
+    def loadstims(self, impath):
+        '''
+        Description
+        -----------
+        Creates lists of nstim stimuli (encoding)
+        & nstim+nstim/2 stimuli (recall)
+        Distractor stimuli are exclusive of encoding stimuli & come from
+        the same semantic categories.
+        Control stimuli (gray squares) are added to encoding list during
+        'runEnc' execution.
+
+        Parameter(s)
+        ------------
+        impath: String or path-like object pointing to image bank location
+
+        Returns
+        -------
+        stimdict: Dictionary containig a participant's images for every
+        trial (encoding & recall conditions). Easy to save to CSV or similar
+        format.
+        '''
+        allimages = loadimages(impath)
+        invld = sampling(allimages, int(self.nstim/2), self.ntrial)
+        encstims = sampling(allimages+int(self.nstim/2)*['GS'],
+                            int(self.nstim),
+                            self.ntrial, exclusives=[invld])
+        recstims = [randsmp(encstims[ntrial]+invld[ntrial],
+                            len(encstims[0])+len(invld[0]))
+                    for ntrial in range(len(encstims))]
+
+        stimdict = dict(zip([ntrial for ntrial in range(self.ntrial)],
+                            [[encstims[ntrial], recstims[ntrial]]
+                             for ntrial in range(self.ntrial)]))
+        for values in stimdict.values():
+            for stimsets in values:
+                for image_ind in stimsets:
+                    image_id = allimages[image_ind]
+                    stimsets[stimsets.index(image_ind)] = image_id
+
+        return stimdict
+
+#    def ams_score(self):
+#        '''Calculates the Amnestic Memory Score for a participant'''
+#        anslist = self.trialdict['Answers']
+#        good = anslist.count('recogOKposOK')
+#        wrong_source = anslist.count('recogOKposWrong')
+#        false_alarm = anslist.count('falseAlarm')
+#        denum = (wrong_source + false_alarm)
+#        if denum != 0:
+#            amscore = good /(wrong_source + false_alarm)
+#        else:
+#            amscore = good
+#        return amscore
+
+    def get_answers(self, trialdict):
+        '''
+        Returns the answers based on keys pressed by subject
+        in a list and adds this list as 'Answers' in 'self.trialdict'.
+        '''
+        answerlist = []
+        encnames = [trialdict['encstims'][stim][0]
+                    for stim in range(len(trialdict['encstims']))]
+        encpos = [trialdict['encstims'][stim][1]
+                  for stim in range(len(trialdict['encstims']))]
+        recnames = [trialdict['recstims'][stim][0]
+                    for stim in range(len(trialdict['recstims']))]
+        recpos = [trialdict['recstims'][stim][1]
+                  for stim in range(len(trialdict['recstims']))]
+        for ans in range(len(encnames)):
+            if recnames[ans] in encnames:
+                if recpos[ans] == encpos[ans]:
+                    answerlist.append('HIT')
+                answerlist.append('WS')
+            elif recnames[ans] not in encnames and recpos[ans] != 'None':
+                answerlist.append('FA')
+            else:
+                answerlist.append('CR')
+        trialdict.update({'answers':answerlist})
+
+    def run_task(self, whichtrial):
+        '''
+        Description
+        -----------
+        Launches the memory task (encoding followed by recall phases).
+        Saves every stimuli for both phases (stimulus name & position) in a
+        dictionary for each trial. A trial consists in a full encoding then
+        retrieval cycle.
+
+        Parameter(s)
+        ------------
+        whichtrial: Integer specifying which trial
+
+        Returns
+        -------
+        trialdict: Dictionary containing
+                   A) Stimuli info (name & position) for encoding condition
+                   B) Stimuli info for (name & answer) for recall condition
+                   C) Results for each answer (HIT, FA, MISS, CR)
+        '''
+        messages = list(range(7))
+
+        messages[0] = ''' Memorize the following images and
+        their location on screen.\
+            Press space to start.'''
+
+        messages[1] = ''' A series of {x} images will appear.\
+        Indicate if shown image corresponds to a previously
+        seen image and in which quadrant it has appeared earlier.\
+        Press SPACE to start'''.format(x=self.nstim+int(self.nstim/2))
+
+        messages[2] = '''
+            Have you seen this picture before?
+            If yes, press "y". If not, press "n".
+                      '''.format()
+
+        messages[3] = '''
+            Where have you seen it?
+            Press 0, 1, 2 or 3 to answer
+                         '''.format()
+
+        messages[4] = '''
+            Where have you seen it?
+            1 = upper-left, 2 = upper-right
+            3 = lower-left, 4 = lower-right
+                           '''.format()
+
+        messages[5] = 'Answer saved!'
+
+        messages[6] = 'Thank you for your time, goodbye!'
+
+        win = visual.Window(size=(1000, 1000),
+                            color=(-1.0, -1.0, -1.0),
+                            units='pix')
+        encstimlist = self.run_enc(win, whichtrial, messages)
+        trialdict = self.run_rec(win, whichtrial, messages, encstimlist)
+        win.close()
+        self.get_answers(trialdict)
+        return trialdict
+
+    def run_enc(self, win, whichtrial, messages):
+        '''
+        Launches encoding phase.
+        A series of 'self.nstim'+1 stimuli
+        ('self.nstim' images + 1 control stimulus (gray square))
+        is shown to subject.
+        Each images appears in a quadrant on screen. Subject must
+        memorize ach image and its position (excepting control stimuli).
+        '''
+        gray_square = '/home/francois/GitHub/ImageTask/Solid_grey.jpg'
+        encstimlist = []
+        thisenctrial = list(self.stimdict[whichtrial][0]+int(\
+                            self.nstim/2)*['GS'])
+        thisenctrial = randsmp(thisenctrial, len(thisenctrial))
+        visual.TextStim(win, text=messages[0], pos=(0.0, 0.0)).draw()
+        win.flip()
+        event.waitKeys(keyList=["space"])
+        for stim in range(len(thisenctrial)):
+            if thisenctrial[stim] == 'GS':
+                encstim = visual.ImageStim(win, image=gray_square,
+                                           size=(500, 500), pos=setstimpos(),
+                                           name='GS')
+            else:
+                encstim = visual.ImageStim(win, thisenctrial[stim],
+                                           color=(1, 1, 1), pos=setstimpos(),
+                                           size=(500, 500),
+                                           name=bname(thisenctrial[stim]))
+            encstim.draw()
+            win.flip()
+            encstimtuple = (encstim.name, tuple(encstim.pos))
+            encstimlist.append(encstimtuple)
+            core.wait(1)
+        return encstimlist
+
+    def run_rec(self, win, whichtrial, messages, encstimlist):
+        '''
+        Launches Recall phase
+
+        A series of 'self.nstim' images ('self.nstim' new
+        images + 'self.nstim'/2 target image seen during encoding phase)
+        is presented to subject.
+        Subject must answer if image shown was seen or not
+        during encoding phase. If so, user must indicate at
+        which position it previously appeared (1,2,3 or 4).
+
+        Answers and stimuli used are returned in a dictionary.
+        All info about each run is stored in a dictionary.
+        '''
+        thisrectrial = self.stimdict[whichtrial][1]
+        stimpos = {'1':(-250.0, 250.0),
+                   '2':(250.0, 250.0),
+                   '3':(250.0, -250.0),
+                   '4':(-250.0, -250.0)}
+        stimnamelist = []
+        visual.TextStim(win, text=messages[1], pos=(0.0, 0.0)).draw()
+        win.flip()
+        event.waitKeys(keyList=["space"])
+
+        for stim in range(len(thisrectrial)):
+            stimulus = visual.ImageStim(win,
+                                        thisrectrial[stim], color=(1, 1, 1),
+                                        pos=(0.0, 0.0), size=(500, 500),
+                                        name=bname(thisrectrial[stim]))
+            visual.TextStim(win, text=messages[2],
+                            pos=(0.0, 300)).draw()
+            visual.TextStim(win, text=messages[2],
+                            pos=(0.0, 300)).autoDraw = True
+            stimulus.draw()
+            win.flip()
+            reckeys = event.waitKeys(keyList=['y', 'n'])
+            if 'y' in reckeys:
+                visual.TextStim(win, text=messages[4],
+                                pos=(0.0, -300)).draw()
+                win.flip()
+                poskeys = event.waitKeys(keyList=['1', '2', '3', '4'])
+                stimnamelist.append((stimulus.name,
+                                     stimpos[str(poskeys[0])]))
+                core.wait(1)
+            elif 'n' in reckeys:
+                stimnamelist.append((stimulus.name, 'None'))
+            visual.TextStim(win, text=messages[5]).draw()
+            win.flip()
+            core.wait(1)
+        trialdict = {'recstims':stimnamelist, 'encstims':encstimlist}
+        visual.TextStim(win, text=messages[6]).draw()
+        win.flip()
+        core.wait(2)
+        return trialdict
+
+TASK01 = ImageTask(4, 2, impath='/home/francois/Desktop/neuromod_image_bank')
+trialdict = TASK01.run_task(0)

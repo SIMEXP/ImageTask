@@ -17,26 +17,20 @@ import imdirect
 
 def square_resize(fname, dimensions=(500, 500)):
     '''
-    Prepare images for the scanner
-
-	This function:
-		Changes apect ratio to square (cropping)
-		Uniformizes image files extensions
-		Resizes images to desired size in pixels
-		Saves resized images to new location (no overwriting)
+    Resizes square aspect-ratio images to desired dimensions.
+    Doesn't overwrite the images; instead, a prefix corresponding
+    to 'dimensions' parameter is added before each image's and folder's
+    name (i.e: folder 'aquatic_mammal' --> '500_aquatic_mammal').
 
 	Parameters
 	----------
 	fname: type = str
 		Name of category images directory (ex: 'outdoor_sport')
 
-	size: type = tuple
+	dimensions: type = tuple
 		Tuple (width, length) indicating desired size in pixels
-			type(width) and type(length) = int
-            width & length should be equal
-
-	extension: type = str
-		Desired file extension for images as string
+		type(width) and type(length) = int
+        'width' & 'length' should be equal
 
 	Returns
     -------
