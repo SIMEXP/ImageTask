@@ -33,7 +33,7 @@ s = pip install psychopy
 {https://drive.google.com/drive/folders/14V2LWbqvvw46JU7Hoz9A1rpeybQCltQ9?usp=sharing}
 
 #### Non-human animals:
-{https://drive.google.com/open?id=1VVQzqC8nGIS8GG4Jw_wklp7ZDvgXqLzT}
+{https://drive.google.com/drive/folders/1VVQzqC8nGIS8GG4Jw_wklp7ZDvgXqLzT?usp=sharing}
 
 #### Useful Spyder IDE to edit and run python files.
 ```python
