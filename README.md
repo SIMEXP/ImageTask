@@ -28,6 +28,15 @@ s = pip install psychopy
 #### Non-human animals:
 {https://drive.google.com/drive/folders/1VVQzqC8nGIS8GG4Jw_wklp7ZDvgXqLzT?usp=sharing}
 
+### Code used to edit and sort images
+
+#### proper_index2.py
+
+#### naming_indexing.py
+
+#### square_image.py
+
+
 #### Useful Spyder IDE to edit and run python files
 ```python
 s = conda install -c anaconda spyder

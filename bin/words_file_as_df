@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Feb  8 14:15:35 2020
+
+@author: francois
+"""
+
+import pandas as pd
+import os
+
+lng_dataframe = pd.read_csv('../validation_task/animate_inanimate_triples_170_05312019-1011_Part1.csv')

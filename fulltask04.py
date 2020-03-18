@@ -46,8 +46,8 @@ class ImageTask():
         self.stimdict = self.loadstims(impath)
         self.stimpos = {'1':(-250.0, 250.0),
                         '2':(250.0, 250.0),
-                        '3':(250.0, -250.0),
-                        '4':(-250.0, -250.0)}
+                        '3':(-250.0, -250.0),
+                        '4':(250.0, -250.0)}
     def loadstims(self, impath):
         '''
         Description
@@ -155,6 +155,7 @@ class ImageTask():
                             units='pix')
         encstimlist = self.run_enc(win, whichrun, messages)
         recall = self.run_rec(win, whichrun, messages, encstimlist)
+        win.saveMovieFrames('./exp_pictures.png')
         win.close()
         return recall
 
@@ -172,6 +173,7 @@ class ImageTask():
         thisencrun = sample(thisencrun, len(thisencrun))
         visual.TextStim(win, text=messages[0], pos=(250.0, 0.0)).draw()
         win.flip()
+        win.getMovieFrame()
         event.waitKeys(keyList=["space"])
         for stim in enumerate(thisencrun):
             encstim = visual.ImageStim(win, stim[1],
@@ -181,6 +183,7 @@ class ImageTask():
                                        name=bname(stim[1]))
             encstim.draw()
             win.flip()
+            win.getMovieFrame()
             encstimtuple = (encstim.name, tuple(encstim.pos))
             encstimlist.append(encstimtuple)
             core.wait(1)
@@ -204,7 +207,10 @@ class ImageTask():
         stimnamelist = []
         visual.TextStim(win, text=messages[1], pos=(250.0, 0.0)).draw()
         win.flip()
+        win.getMovieFrame()
         event.waitKeys(keyList=["space"])
+        visual.TextStim(win, text=messages[2],
+                        pos=(250.0, 300)).autoDraw = True
         for stim in enumerate(thisrecrun):
             stimulus = visual.ImageStim(win,
                                         stim[1], color=(1, 1, 1),
@@ -212,28 +218,33 @@ class ImageTask():
                                         name=bname(stim[1]))
             visual.TextStim(win, text=messages[2],
                             pos=(250.0, 300)).draw()
-            visual.TextStim(win, text=messages[2],
-                            pos=(250.0, 300)).autoDraw = True
             stimulus.draw()
             win.flip()
+            win.getMovieFrame()
             reckeys = event.waitKeys(keyList=['y', 'n'])
             if 'y' in reckeys:
+                stimulus.draw()
                 visual.TextStim(win, text=messages[4],
                                 pos=(250.0, -300)).draw()
                 win.flip()
+                win.getMovieFrame()
                 poskeys = event.waitKeys(keyList=['1', '2', '3', '4'])
                 stimnamelist.append((stimulus.name,
                                      self.stimpos[str(poskeys[0])]))
                 core.wait(1)
             elif 'n' in reckeys:
                 stimnamelist.append((stimulus.name, 'None'))
-            visual.TextStim(win, text=messages[5]).draw()
+            visual.TextStim(win, text=messages[5], pos=(325, -400)).draw()
+            stimulus.draw()
             win.flip()
+            win.getMovieFrame()
             core.wait(1)
         rundict = {'recstims':stimnamelist, 'encstims':encstimlist}
         get_answers(rundict)
-        visual.TextStim(win, text=messages[6]).draw()
+        visual.TextStim.autoDraw = False
+        visual.TextStim(win, text=messages[6], pos=(300, 0)).draw()
         win.flip()
+        win.getMovieFrame()
         core.wait(2)
         return rundict
 
