@@ -53,8 +53,6 @@ def inventory(topdir='neuromod_image_bank'):
                                 columns=matrix)
     inventory_df.to_excel(join(os.getcwd(), topdir+'.xlsx'))
     
-#inventory('inv_df2')
-
 def flatten(nestedlst):
     """
     Description
